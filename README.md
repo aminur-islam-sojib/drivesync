@@ -21,6 +21,7 @@ drivesync/
 │   ├── src/lib/               # API client, upload coordinator, formatters
 │   └── src/stores/            # Zustand 5 client stores (auth, ui, selection, upload, dialog)
 ├── docs/                      # Architectural specifications and references
+│   ├── APP_ARCHITECTURE_AND_TECH_STACK.md # App capabilities, public/protected domains & tech stack
 │   ├── GOOGLE_DRIVE_UI_REFERENCE.md # Modern Google Drive Web UI & Material 3 reference
 │   ├── MULTI_ACCOUNT_MANAGEMENT.md # Multi-Account Google Drive architecture & UX guide
 │   ├── API_REFERENCE.md       # Complete backend endpoint contracts & schemas
