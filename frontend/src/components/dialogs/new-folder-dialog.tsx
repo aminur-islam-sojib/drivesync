@@ -144,3 +144,4 @@ export function NewFolderDialog({ onFolderCreated }: NewFolderDialogProps) {
     </Dialog.Root>
   )
 }
+

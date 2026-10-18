@@ -91,3 +91,4 @@ export const useSelectionStore = create<SelectionState>((set, get) => ({
     return selectedFileIds.includes(id) || selectedFolderIds.includes(id)
   },
 }))
+

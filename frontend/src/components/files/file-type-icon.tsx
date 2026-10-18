@@ -61,3 +61,4 @@ export function FileTypeIcon({
       return <GenericFile className={iconClass} style={{ color }} />
   }
 }
+

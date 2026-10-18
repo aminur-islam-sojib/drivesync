@@ -70,3 +70,4 @@ export const AccountBadges = React.memo(function AccountBadges({
     </div>
   )
 })
+

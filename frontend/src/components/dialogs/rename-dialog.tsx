@@ -144,3 +144,4 @@ export function RenameDialog({ onRenamed }: RenameDialogProps) {
     </Dialog.Root>
   )
 }
+
