@@ -8,6 +8,7 @@ import { RenameDialog } from '@/components/dialogs/rename-dialog'
 import { MoveDialog } from '@/components/dialogs/move-dialog'
 import { MarkdownEditorModal } from '@/components/editor/markdown-editor-modal'
 import { FilePreviewModal } from '@/components/preview/file-preview-modal'
+import { ShareDialog } from '@/components/dialogs/share-dialog'
 
 export function DialogHost() {
   const triggerRefresh = () => {
@@ -26,6 +27,7 @@ export function DialogHost() {
       <MoveDialog onMoved={triggerRefresh} />
       <MarkdownEditorModal />
       <FilePreviewModal />
+      <ShareDialog onShareUpdated={triggerRefresh} />
     </>
   )
 }

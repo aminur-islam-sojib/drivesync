@@ -2,12 +2,16 @@
 
 import * as React from 'react'
 import { Download, ExternalLink } from 'lucide-react'
-import { FileItem } from '@/lib/types'
 import { formatBytes } from '@/lib/utils'
 import { FileTypeIcon } from '@/components/files/file-type-icon'
 
 interface GenericViewerProps {
-  file: FileItem
+  file: {
+    name: string
+    mimeType: string
+    sizeBytes?: string | number | null
+    provider?: string
+  }
   onDownload: () => void
   onOpenGoogleDrive?: () => void
 }

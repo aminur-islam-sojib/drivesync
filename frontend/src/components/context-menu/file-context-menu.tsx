@@ -62,18 +62,6 @@ export function FileContextMenu({
     }
   }
 
-  const handleShare = async () => {
-    try {
-      const res = await api.post(`/files/${file.id}/share`)
-      if (res.data?.url) {
-        await navigator.clipboard.writeText(res.data.url)
-        toast.success('Public share link copied to clipboard!')
-      }
-    } catch (err: unknown) {
-      const msg = formatApiError(err, 'Failed to create share link.')
-      toast.error(msg)
-    }
-  }
 
   const handleDelete = async () => {
     if (!confirm(`Are you sure you want to move "${file.name}" to the Recycle Bin?`)) {
@@ -138,11 +126,11 @@ export function FileContextMenu({
           )}
 
           <ContextMenu.Item
-            onClick={handleShare}
+            onClick={() => openDialog('share', { file })}
             className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-ink hover:bg-surface-2 outline-none cursor-pointer"
           >
             <Share2 className="h-4 w-4 text-ink-3" />
-            <span>Copy Share Link</span>
+            <span>Share & Public Link</span>
           </ContextMenu.Item>
 
           <ContextMenu.Separator className="my-1 h-px bg-line" />

@@ -18,23 +18,39 @@ export default function RecentPage() {
   const setViewMode = useUIStore((state) => state.setViewMode)
   const openDialog = useDialogStore((state) => state.openDialog)
 
-  const loadRecentFiles = React.useCallback(async () => {
-    try {
-      const res = await api.get('/files')
-      const items: FileItem[] = res.data?.files || []
-      // Sort most recent first
-      items.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
-      setFiles(items)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+  const [refreshIndex, setRefreshIndex] = React.useState(0)
+  const triggerRefresh = () => setRefreshIndex((v) => v + 1)
 
   React.useEffect(() => {
-    void loadRecentFiles()
-  }, [loadRecentFiles])
+    let isMounted = true
+
+    async function fetchRecent() {
+      try {
+        const res = await api.get('/files')
+        const items: FileItem[] = res.data?.files || []
+        items.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        if (isMounted) {
+          setFiles(items)
+          setIsLoading(false)
+        }
+      } catch {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void fetchRecent()
+
+    const handleRefresh = () => triggerRefresh()
+    window.addEventListener('drivesync-refresh-items', handleRefresh)
+    return () => {
+      isMounted = false
+      window.removeEventListener('drivesync-refresh-items', handleRefresh)
+    }
+  }, [refreshIndex])
 
   return (
     <div className="p-4 sm:p-6 space-y-6 pb-24">
@@ -88,14 +104,14 @@ export default function RecentPage() {
           <FileTable
             files={files}
             isLoading={isLoading}
-            onFileMutated={loadRecentFiles}
+            onFileMutated={triggerRefresh}
             onFileDoubleClick={(file) => openDialog('file-preview', { file, files })}
           />
         ) : (
           <FileGrid
             files={files}
             isLoading={isLoading}
-            onFileMutated={loadRecentFiles}
+            onFileMutated={triggerRefresh}
             onFileDoubleClick={(file) => openDialog('file-preview', { file, files })}
           />
         )}
