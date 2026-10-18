@@ -5,6 +5,7 @@ export type DialogType =
   | 'connect-drive'
   | 's3-config'
   | 'rename'
+  | 'move'
   | 'share'
   | 'delete'
   | 'storage-breakdown'

@@ -154,3 +154,19 @@ export function truncateMiddle(str: string, maxLen = 32): string {
   return `${str.slice(0, half)}...${str.slice(-half)}`
 }
 
+export type FolderTone = 'blue' | 'red' | 'green' | 'amber' | 'violet' | 'pink' | 'cyan' | 'slate'
+
+export function toneFromLegacy(color?: string | null): FolderTone {
+  if (!color) return 'blue'
+  const c = color.toLowerCase()
+  if (c.includes('red') || c === '#ef4444' || c === '#ea4335') return 'red'
+  if (c.includes('green') || c === '#10b981' || c === '#0f9d58') return 'green'
+  if (c.includes('amber') || c.includes('yellow') || c === '#f59e0b' || c === '#f4b400') return 'amber'
+  if (c.includes('violet') || c.includes('purple') || c === '#8b5cf6' || c === '#a142f4') return 'violet'
+  if (c.includes('pink') || c.includes('rose') || c === '#ec4899' || c === '#e91e63') return 'pink'
+  if (c.includes('cyan') || c.includes('teal') || c === '#06b6d4' || c === '#00acc1') return 'cyan'
+  if (c.includes('slate') || c.includes('gray') || c === '#64748b') return 'slate'
+  return 'blue'
+}
+
+

@@ -1,0 +1,80 @@
+/* app/folder.css - Signature Folder Card Styles */
+.folder {
+  --tone: var(--folder-blue);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+}
+
+.folder[data-tone="blue"]   { --tone: var(--folder-blue); }
+.folder[data-tone="red"]    { --tone: var(--folder-red); }
+.folder[data-tone="green"]  { --tone: var(--folder-green); }
+.folder[data-tone="amber"]  { --tone: var(--folder-amber); }
+.folder[data-tone="violet"] { --tone: var(--folder-violet); }
+.folder[data-tone="pink"]   { --tone: var(--folder-pink); }
+.folder[data-tone="cyan"]   { --tone: var(--folder-cyan); }
+.folder[data-tone="slate"]  { --tone: var(--folder-slate); }
+
+.folder__back {
+  position: absolute;
+  inset: 14% 0 0 0;
+  border-radius: var(--r-lg, 14px);
+  background: color-mix(in oklab, var(--tone) 24%, var(--surface-2));
+}
+
+.folder__back::before {
+  /* the folder tab */
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -13%;
+  width: 40%;
+  height: 20%;
+  border-radius: var(--r-md, 10px) var(--r-md, 10px) 0 0;
+  background: inherit;
+}
+
+.folder__sheet {
+  position: absolute;
+  inset: 9% 7% 34% 7%;
+  border-radius: var(--r-sm, 6px);
+  background: var(--surface);
+  box-shadow: var(--shadow-sheet);
+  transition: transform 220ms var(--ease-out);
+}
+
+.folder__front {
+  position: absolute;
+  inset: 32% 0 0 0;
+  border-radius: var(--r-lg, 14px);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--tone) 10%, var(--surface)) 0%,
+    color-mix(in oklab, var(--tone) 24%, var(--surface-2)) 100%
+  );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), var(--shadow-card);
+}
+
+.dark .folder__front {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+/* Hover and drop lifting sheet animations */
+a:hover .folder__sheet,
+button:hover .folder__sheet,
+a:focus-visible .folder__sheet,
+button:focus-visible .folder__sheet,
+.folder[data-drop="true"] .folder__sheet {
+  transform: translateY(-9%);
+}
+
+.folder[data-drop="true"] .folder__sheet {
+  transform: translateY(-16%);
+}
+
+.folder[data-selected="true"] {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-lg, 14px);
+}
