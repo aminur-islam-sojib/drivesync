@@ -64,3 +64,4 @@ export const editorTheme: EditorThemeClasses = {
   },
   link: 'text-accent underline hover:opacity-80 transition-opacity cursor-pointer',
 }
+
