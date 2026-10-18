@@ -10,7 +10,7 @@ export function HeroSection() {
     <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28">
       {/* Background Subtle Gradient Blobs */}
       <div
-        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 opacity-30 blur-[100px]"
+        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-125 w-200 -translate-x-1/2 opacity-30 blur-[100px]"
         style={{
           background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)',
         }}
@@ -107,4 +107,3 @@ export function HeroSection() {
     </section>
   )
 }
-
