@@ -5,9 +5,6 @@ import {
   ShieldCheck,
   Search,
   Eye,
-  FolderSync,
-  HardDrive,
-  Share2,
 } from 'lucide-react'
 
 export function BentoFeatures() {

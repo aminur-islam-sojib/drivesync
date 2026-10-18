@@ -4,21 +4,29 @@ import * as React from 'react'
 import Link from 'next/link'
 import { HardDrive, ArrowRight, Sun, Moon } from 'lucide-react'
 
-export function LandingNavbar() {
-  const [isDark, setIsDark] = React.useState(false)
+function subscribeTheme(callback: () => void) {
+  if (typeof window === 'undefined') return () => {}
+  const observer = new MutationObserver(callback)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+  return () => observer.disconnect()
+}
 
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark')
-    setIsDark(isDarkMode)
-  }, [])
+function getThemeSnapshot() {
+  return document.documentElement.classList.contains('dark')
+}
+
+function getServerSnapshot() {
+  return false
+}
+
+export function LandingNavbar() {
+  const isDark = React.useSyncExternalStore(subscribeTheme, getThemeSnapshot, getServerSnapshot)
 
   const toggleTheme = () => {
-    const newDark = !isDark
-    setIsDark(newDark)
-    if (newDark) {
-      document.documentElement.classList.add('dark')
-    } else {
+    if (isDark) {
       document.documentElement.classList.remove('dark')
+    } else {
+      document.documentElement.classList.add('dark')
     }
   }
 

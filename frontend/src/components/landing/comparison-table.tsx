@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Check, X, Minus } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 
 interface ComparisonRow {
   feature: string

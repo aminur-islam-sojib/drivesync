@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Plus, Check, ShieldCheck, Sparkles } from 'lucide-react'
+import { ShieldCheck, Sparkles } from 'lucide-react'
 
 interface AccountOption {
   email: string

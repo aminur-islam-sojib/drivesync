@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle2, Shield, Lock, Layers } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Shield, Lock } from 'lucide-react'
 import { StorageCalculator } from './storage-calculator'
 
 export function HeroSection() {
