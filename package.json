@@ -1,0 +1,10 @@
+{
+  "name": "drivesync",
+  "private": true,
+  "scripts": {
+    "db:push": "npm --prefix backend run db:push",
+    "db:generate": "npm --prefix backend run prisma:generate",
+    "backend:dev": "npm --prefix backend run dev",
+    "frontend:dev": "npm --prefix backend run dev"
+  }
+}
