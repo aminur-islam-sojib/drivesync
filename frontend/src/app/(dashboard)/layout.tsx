@@ -11,6 +11,8 @@ import { DashboardSidebar } from '@/components/layout/sidebar'
 import { FilterChipsBar } from '@/components/layout/filter-chips-bar'
 import { InfoDrawer } from '@/components/layout/info-drawer'
 import { DialogHost } from '@/components/dialogs/dialog-host'
+import { UploadDropzone } from '@/components/uploads/upload-dropzone'
+import { UploadTray } from '@/components/uploads/upload-tray'
 
 export default function DashboardLayout({
   children,
@@ -95,6 +97,10 @@ export default function DashboardLayout({
 
       {/* 3. Central Dialogs & Modals Controller */}
       <DialogHost />
+
+      {/* 4. Global Drag & Drop Overlay and Floating Upload Tray */}
+      <UploadDropzone />
+      <UploadTray />
     </div>
   )
 }

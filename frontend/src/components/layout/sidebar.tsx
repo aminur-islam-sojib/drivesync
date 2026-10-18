@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import {
   FolderPlus,
@@ -16,14 +16,15 @@ import {
   Settings,
   Database,
   CloudUpload,
-  Layers,
+  Upload,
+  FileEdit,
   X,
 } from 'lucide-react'
-import { useAccountStore } from '@/stores/account-store'
 import { useUIStore } from '@/stores/ui-store'
 import { useDialogStore } from '@/stores/dialog-store'
-import { formatBytes } from '@/lib/utils'
-import { MultiAccountStorageBar } from '@/components/accounts/multi-account-storage-bar'
+import { useUploadStore } from '@/stores/upload-store'
+import { SidebarDrivesSection } from './sidebar-drives-section'
+import { SidebarStorageWidget } from './sidebar-storage-widget'
 
 interface NavItem {
   label: string
@@ -43,31 +44,14 @@ const NAV_ITEMS: NavItem[] = [
 
 export function DashboardSidebar() {
   const pathname = usePathname()
-  const router = useRouter()
-
   const isMobileOpen = useUIStore((state) => state.isMobileSidebarOpen)
   const setMobileOpen = useUIStore((state) => state.setMobileSidebarOpen)
   const openDialog = useDialogStore((state) => state.openDialog)
-
-  const connectedAccounts = useAccountStore((state) => state.connectedAccounts)
-  const selectedAccountId = useAccountStore((state) => state.selectedAccountId)
-  const setSelectedAccountId = useAccountStore((state) => state.setSelectedAccountId)
-  const storageSummary = useAccountStore((state) => state.storageSummary)
-
-  const usedBytes = Number(storageSummary?.usedBytes || 0)
-  const totalBytes = Number(storageSummary?.totalBytes || 0)
-  const percentage = totalBytes > 0 ? Math.min(100, Math.round((usedBytes / totalBytes) * 100)) : 0
+  const addFiles = useUploadStore((state) => state.addFiles)
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
 
   const handleNavClick = () => {
     if (isMobileOpen) setMobileOpen(false)
-  }
-
-  const handleAccountFilter = (accountId: string | null) => {
-    setSelectedAccountId(accountId)
-    if (pathname !== '/all-files') {
-      router.push('/all-files')
-    }
-    handleNavClick()
   }
 
   const content = (
@@ -119,6 +103,27 @@ export function DashboardSidebar() {
                   <span>New folder</span>
                 </DropdownMenu.Item>
 
+                <DropdownMenu.Item
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-ink-2 hover:text-ink hover:bg-surface-2 cursor-pointer outline-none transition-colors"
+                >
+                  <Upload className="h-4 w-4 text-accent" />
+                  <span>File upload</span>
+                </DropdownMenu.Item>
+
+                <DropdownMenu.Item
+                  onClick={() =>
+                    openDialog('editor', {
+                      initialTitle: 'Untitled Document.md',
+                      initialContent: '# Untitled Document\n\nStart writing here...',
+                    })
+                  }
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-ink-2 hover:text-ink hover:bg-surface-2 cursor-pointer outline-none transition-colors"
+                >
+                  <FileEdit className="h-4 w-4 text-accent" />
+                  <span>New document</span>
+                </DropdownMenu.Item>
+
                 <DropdownMenu.Separator className="h-px bg-line my-1" />
 
                 <DropdownMenu.Item
@@ -139,6 +144,20 @@ export function DashboardSidebar() {
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
+
+          {/* Hidden File Input for Native File Selection */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                addFiles(Array.from(e.target.files))
+                e.target.value = ''
+              }
+            }}
+          />
         </div>
 
         {/* Primary Navigation Links */}
@@ -166,92 +185,11 @@ export function DashboardSidebar() {
         </nav>
 
         {/* Multi-Account Connected Section */}
-        <div className="pt-2 border-t border-line/60">
-          <div className="flex items-center justify-between px-3 mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-3">
-              Drives ({connectedAccounts.length})
-            </span>
-            <button
-              type="button"
-              onClick={() => openDialog('connect-drive')}
-              className="text-xs text-accent hover:underline cursor-pointer font-medium"
-              title="Add another Google Drive"
-            >
-              + Add
-            </button>
-          </div>
-
-          <div className="space-y-1">
-            <button
-              type="button"
-              onClick={() => handleAccountFilter(null)}
-              className={`flex w-full items-center justify-between h-8 px-3 rounded-lg text-xs transition-colors cursor-pointer ${
-                selectedAccountId === null
-                  ? 'bg-accent-soft text-accent font-semibold'
-                  : 'text-ink-2 hover:bg-surface-2 hover:text-ink'
-              }`}
-            >
-              <div className="flex items-center gap-2 truncate">
-                <Layers className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">All Connected Drives</span>
-              </div>
-            </button>
-
-            {connectedAccounts.map((account) => {
-              const isSelected = selectedAccountId === account.id
-              const isError = account.status === 'error'
-
-              return (
-                <button
-                  key={account.id}
-                  type="button"
-                  onClick={() => handleAccountFilter(account.id)}
-                  className={`flex w-full items-center justify-between h-8 px-3 rounded-lg text-xs transition-colors cursor-pointer ${
-                    isSelected
-                      ? 'bg-accent-soft text-accent font-semibold'
-                      : 'text-ink-2 hover:bg-surface-2 hover:text-ink'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    <span
-                      className={`h-2 w-2 rounded-full shrink-0 ${
-                        isError ? 'bg-danger' : 'bg-success'
-                      }`}
-                    />
-                    <span className="truncate">{account.displayName || account.email}</span>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
+        <SidebarDrivesSection onSelectAccount={handleNavClick} />
       </div>
 
       {/* Aggregated Storage Pool Meter */}
-      <div className="pt-4 border-t border-line/60">
-        <Link
-          href="/storage"
-          onClick={handleNavClick}
-          className="block rounded-2xl bg-surface-2 p-3.5 hover:bg-surface transition-all border border-line/40 group"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-ink group-hover:text-accent transition-colors">
-              Storage Pool
-            </span>
-            <span className="text-[11px] font-bold text-ink-2">{percentage}%</span>
-          </div>
-
-          {/* Multi-Account Segmented Progress Bar */}
-          <MultiAccountStorageBar compact />
-
-          <div className="mt-2 flex items-center justify-between text-[11px] text-ink-3">
-            <span>
-              {formatBytes(usedBytes)} of {formatBytes(totalBytes)}
-            </span>
-            <span className="text-accent group-hover:underline">Manage</span>
-          </div>
-        </Link>
-      </div>
+      <SidebarStorageWidget onNavigate={handleNavClick} />
     </div>
   )
 
