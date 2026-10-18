@@ -8,7 +8,7 @@ DriveSync is a multi-account Google Drive and S3 storage gateway and aggregator.
 
 ```
 drivesync/
-├── backend/                   # READY: Express 5 + Prisma 6 + MySQL REST API (Port 4000)
+├── backend/                   # READY: Express 5 + Prisma 6 + PostgreSQL REST API (Port 4000)
 │   ├── src/
 │   │   ├── modules/           # auth, connected-accounts, storage, files, folders, uploads
 │   │   ├── config/            # environment, prisma client

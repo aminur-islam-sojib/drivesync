@@ -1,18 +1,18 @@
 services:
-  mysql:
-    image: mysql:8.4
+  # Optional local Postgres container (if not using cloud Postgres)
+  postgres:
+    image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-drivesync}
-      MYSQL_USER: ${MYSQL_USER:-drivesync}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root}
+      POSTGRES_USER: ${POSTGRES_USER:-drivesync}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      POSTGRES_DB: ${POSTGRES_DB:-drivesync}
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-drivesync} -d ${POSTGRES_DB:-drivesync}"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -21,11 +21,9 @@ services:
     build:
       context: ./backend
     restart: unless-stopped
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
-      DATABASE_URL: mysql://${MYSQL_USER:-drivesync}:${MYSQL_PASSWORD:-root}@mysql:3306/${MYSQL_DATABASE:-drivesync}
+      # If using Cloud Postgres, provide your DATABASE_URL in the environment
+      DATABASE_URL: ${DATABASE_URL:-postgresql://drivesync:root@postgres:5432/drivesync?schema=public}
       APP_PORT: 4000
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-d55e02b6eabc9cb8d66aad484afc8f227280577375e09b7bd5019557c2cc0ffb}
@@ -51,5 +49,4 @@ services:
       - "3000:3000"
 
 volumes:
-  mysql_data:
-
+  postgres_data:

@@ -3,7 +3,7 @@
 You are implementing the frontend for DriveSync, a multi-account Google Drive and S3 file manager.
 
 ## Architecture & Project Layout
-* **Backend (`backend/`)**: Express 5 REST API, Prisma 6, MySQL, Google Drive & AWS SDK integrations. **The backend is READY and running on port 4000**. Do not modify backend code or schemas unless explicitly instructed.
+* **Backend (`backend/`)**: Express 5 REST API, Prisma 6, PostgreSQL, Google Drive & AWS SDK integrations. **The backend is READY and running on port 4000**. Do not modify backend code or schemas unless explicitly instructed.
 * **Frontend (`frontend/`)**: Next.js 16 App Router, React 19, TypeScript strict, Tailwind CSS v4, Zustand 5, shadcn/ui on Radix. This is the active development area.
 * **API Reference**: Refer to [`docs/API_REFERENCE.md`](file:///home/sojib-ahmed/Projects%20/drivesync/docs/API_REFERENCE.md) for all backend endpoint contracts, headers, and payload schemas.
 * **Design System**: Refer to [`docs/DESIGN_SYSTEM.md`](file:///home/sojib-ahmed/Projects%20/drivesync/docs/DESIGN_SYSTEM.md) for colors, tokens, signature folder cards, and visual references in `docs/references/`.
