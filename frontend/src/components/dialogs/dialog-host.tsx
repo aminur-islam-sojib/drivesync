@@ -7,6 +7,7 @@ import { NewFolderDialog } from '@/components/dialogs/new-folder-dialog'
 import { RenameDialog } from '@/components/dialogs/rename-dialog'
 import { MoveDialog } from '@/components/dialogs/move-dialog'
 import { MarkdownEditorModal } from '@/components/editor/markdown-editor-modal'
+import { FilePreviewModal } from '@/components/preview/file-preview-modal'
 
 export function DialogHost() {
   const triggerRefresh = () => {
@@ -24,6 +25,7 @@ export function DialogHost() {
       <RenameDialog onRenamed={triggerRefresh} />
       <MoveDialog onMoved={triggerRefresh} />
       <MarkdownEditorModal />
+      <FilePreviewModal />
     </>
   )
 }

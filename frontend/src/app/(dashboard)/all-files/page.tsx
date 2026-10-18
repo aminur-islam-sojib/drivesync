@@ -31,7 +31,6 @@ export default function AllFilesPage() {
 
   const viewMode = useUIStore((state) => state.viewMode)
   const setViewMode = useUIStore((state) => state.setViewMode)
-  const setSelectedItem = useUIStore((state) => state.setSelectedItem)
   const openDialog = useDialogStore((state) => state.openDialog)
 
   const connectedAccounts = useAccountStore((state) => state.connectedAccounts)
@@ -258,14 +257,18 @@ export default function AllFilesPage() {
             files={sortedFiles}
             isLoading={isLoading}
             onFileMutated={refreshData}
-            onFileDoubleClick={(file) => setSelectedItem(file.id, 'file')}
+            onFileDoubleClick={(file) =>
+              openDialog('file-preview', { file, files: sortedFiles })
+            }
           />
         ) : (
           <FileGrid
             files={sortedFiles}
             isLoading={isLoading}
             onFileMutated={refreshData}
-            onFileDoubleClick={(file) => setSelectedItem(file.id, 'file')}
+            onFileDoubleClick={(file) =>
+              openDialog('file-preview', { file, files: sortedFiles })
+            }
           />
         )}
 

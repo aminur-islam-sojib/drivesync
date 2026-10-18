@@ -15,8 +15,7 @@ import {
 import { toast } from 'sonner'
 import { FileItem } from '@/lib/types'
 import { useDialogStore } from '@/stores/dialog-store'
-import { useUIStore } from '@/stores/ui-store'
-import { api, formatApiError } from '@/lib/api'
+import { api, formatApiError, downloadFile } from '@/lib/api'
 
 interface FileContextMenuProps {
   file: FileItem
@@ -30,7 +29,6 @@ export function FileContextMenu({
   onFileMutated,
 }: FileContextMenuProps) {
   const openDialog = useDialogStore((state) => state.openDialog)
-  const setSelectedItem = useUIStore((state) => state.setSelectedItem)
 
   const isEditable =
     file.name.endsWith('.md') ||
@@ -45,17 +43,7 @@ export function FileContextMenu({
 
   const handleDownload = async () => {
     try {
-      const response = await api.get(`/files/${file.id}/download`, {
-        responseType: 'blob',
-      })
-      const url = window.URL.createObjectURL(new Blob([response.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', file.name)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      window.URL.revokeObjectURL(url)
+      await downloadFile(file.id, file.name)
       toast.success(`Downloaded ${file.name}`)
     } catch (err: unknown) {
       const msg = formatApiError(err, 'Failed to download file.')
@@ -124,11 +112,11 @@ export function FileContextMenu({
           )}
 
           <ContextMenu.Item
-            onClick={() => setSelectedItem(file.id, 'file')}
+            onClick={() => openDialog('file-preview', { file })}
             className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-ink hover:bg-surface-2 outline-none cursor-pointer"
           >
-            <Eye className="h-4 w-4 text-ink-3" />
-            <span>Preview & Details</span>
+            <Eye className="h-4 w-4 text-accent" />
+            <span>Preview & Stream</span>
           </ContextMenu.Item>
 
           <ContextMenu.Item

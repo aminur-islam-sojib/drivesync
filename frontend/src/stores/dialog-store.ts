@@ -10,6 +10,7 @@ export type DialogType =
   | 'share'
   | 'delete'
   | 'storage-breakdown'
+  | 'file-preview'
 
 interface DialogState {
   activeDialog: DialogType | null
