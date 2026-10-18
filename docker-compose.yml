@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-drivesync} -d ${POSTGRES_DB:-drivesync}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-drivesync} -d ${POSTGRES_DB:-drivesync}" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     environment:
       # If using Cloud Postgres, provide your DATABASE_URL in the environment
-      DATABASE_URL: ${DATABASE_URL:-postgresql://drivesync:root@postgres:5432/drivesync?schema=public}
+      DATABASE_URL: ${DATABASE_URL:-postgres://drivesync:root@postgres:5432/drivesync?schema=public}
       APP_PORT: 4000
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-d55e02b6eabc9cb8d66aad484afc8f227280577375e09b7bd5019557c2cc0ffb}

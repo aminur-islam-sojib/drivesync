@@ -23,7 +23,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.954.0",
     "@aws-sdk/lib-storage": "^3.954.0",
-    "@prisma/client": "^6.19.3",
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "archiver": "^8.0.0",
     "argon2": "^0.44.0",
     "busboy": "^1.6.0",
@@ -32,7 +33,8 @@
     "express": "^5.2.1",
     "googleapis": "^173.0.0",
     "jsonwebtoken": "^9.0.3",
-    "prisma": "^6.19.3",
+    "pg": "^8.23.1",
+    "prisma": "^7.10.1",
     "undici": "^7.27.1",
     "zod": "^4.4.3"
   },
@@ -43,6 +45,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.9.1",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }
