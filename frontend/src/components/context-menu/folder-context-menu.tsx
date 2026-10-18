@@ -50,7 +50,7 @@ export function FolderContextMenu({
     <ContextMenu.Root>
       <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
       <ContextMenu.Portal>
-        <ContextMenu.Content className="z-50 min-w-[190px] overflow-hidden rounded-2xl border border-line bg-surface p-1.5 shadow-pop select-none animate-in fade-in zoom-in-95">
+        <ContextMenu.Content className="z-50 min-w-47.5 overflow-hidden rounded-2xl border border-line bg-surface p-1.5 shadow-pop select-none animate-in fade-in zoom-in-95">
           <ContextMenu.Item
             onClick={handleOpen}
             className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-ink hover:bg-surface-2 outline-none cursor-pointer"

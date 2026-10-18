@@ -6,6 +6,7 @@ import {
   Eye,
   Download,
   Edit3,
+  FileEdit,
   FolderInput,
   Share2,
   Trash2,
@@ -30,6 +31,17 @@ export function FileContextMenu({
 }: FileContextMenuProps) {
   const openDialog = useDialogStore((state) => state.openDialog)
   const setSelectedItem = useUIStore((state) => state.setSelectedItem)
+
+  const isEditable =
+    file.name.endsWith('.md') ||
+    file.name.endsWith('.txt') ||
+    file.name.endsWith('.json') ||
+    file.name.endsWith('.csv') ||
+    file.name.endsWith('.yml') ||
+    file.name.endsWith('.yaml') ||
+    file.mimeType.includes('text') ||
+    file.mimeType.includes('markdown') ||
+    file.mimeType.includes('json')
 
   const handleDownload = async () => {
     try {
@@ -94,7 +106,23 @@ export function FileContextMenu({
     <ContextMenu.Root>
       <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
       <ContextMenu.Portal>
-        <ContextMenu.Content className="z-50 min-w-[190px] overflow-hidden rounded-2xl border border-line bg-surface p-1.5 shadow-pop select-none animate-in fade-in zoom-in-95">
+        <ContextMenu.Content className="z-50 min-w-47.5 overflow-hidden rounded-2xl border border-line bg-surface p-1.5 shadow-pop select-none animate-in fade-in zoom-in-95">
+          {isEditable && (
+            <ContextMenu.Item
+              onClick={() =>
+                openDialog('editor', {
+                  fileId: file.id,
+                  fileName: file.name,
+                  folderId: file.folderId,
+                })
+              }
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-accent hover:bg-accent-soft/30 outline-none cursor-pointer"
+            >
+              <FileEdit className="h-4 w-4 text-accent" />
+              <span>Edit Document</span>
+            </ContextMenu.Item>
+          )}
+
           <ContextMenu.Item
             onClick={() => setSelectedItem(file.id, 'file')}
             className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-ink hover:bg-surface-2 outline-none cursor-pointer"

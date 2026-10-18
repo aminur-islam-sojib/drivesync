@@ -8,6 +8,7 @@ import {
   List,
   ArrowUpDown,
   Plus,
+  FileEdit,
   CloudUpload,
   ChevronRight,
   FolderOpen,
@@ -181,20 +182,22 @@ export default function AllFilesPage() {
           <button
             type="button"
             onClick={() => {
-              const options: SortOption[] = [
-                'name-asc',
-                'name-desc',
-                'size-desc',
-                'size-asc',
-                'date-desc',
-              ]
-              const nextIndex = (options.indexOf(sortBy) + 1) % options.length
-              setSortBy(options[nextIndex])
+              const opts: SortOption[] = ['name-asc', 'name-desc', 'size-desc', 'size-asc', 'date-desc']
+              setSortBy(opts[(opts.indexOf(sortBy) + 1) % opts.length])
             }}
             className="flex h-9 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-xs font-medium text-ink-2 hover:bg-surface-2 hover:text-ink transition-colors cursor-pointer"
           >
             <ArrowUpDown className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Sort: {sortBy.replace('-', ' ')}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openDialog('editor', { folderId, fileName: 'Untitled-Note.md' })}
+            className="flex h-9 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-xs font-semibold text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+          >
+            <FileEdit className="h-3.5 w-3.5 text-accent" />
+            <span className="hidden sm:inline">New Note</span>
           </button>
 
           <button

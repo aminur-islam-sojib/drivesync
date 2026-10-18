@@ -6,6 +6,7 @@ export type DialogType =
   | 's3-config'
   | 'rename'
   | 'move'
+  | 'editor'
   | 'share'
   | 'delete'
   | 'storage-breakdown'
