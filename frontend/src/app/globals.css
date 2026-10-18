@@ -1,26 +1,111 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --canvas: #F8FAFD;
+  --surface: #FFFFFF;
+  --surface-2: #EEF2F6;
+  --surface-container-high: #E3E8EF;
+  --line: #E0E3E7;
+  --line-strong: #C4C7C5;
+  --ink: #1F1F1F;
+  --ink-2: #444746;
+  --ink-3: #747775;
+  --accent: #0B57D0;
+  --accent-soft: #D3E3FD;
+  --accent-ink: #FFFFFF;
+  --success: #0F9D58;
+  --warning: #F4B400;
+  --danger: #EA4335;
+
+  --folder-blue: #3B82F6;
+  --folder-red: #EF4444;
+  --folder-green: #10B981;
+  --folder-amber: #F59E0B;
+  --folder-violet: #8B5CF6;
+  --folder-pink: #EC4899;
+  --folder-cyan: #06B6D4;
+  --folder-slate: #64748B;
+
+  --shadow-card: 0 1px 2px rgb(16 24 40 / .06), 0 1px 3px rgb(16 24 40 / .04);
+  --shadow-pop: 0 8px 24px rgb(16 24 40 / .12), 0 2px 6px rgb(16 24 40 / .06);
+  --shadow-sheet: 0 1px 2px rgb(16 24 40 / .10);
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 24px;
+  --r-3xl: 28px;
+  --ease-out: cubic-bezier(.22, .8, .24, 1);
+}
+
+.dark {
+  color-scheme: dark;
+  --canvas: #131314;
+  --surface: #1E1F20;
+  --surface-2: #282A2D;
+  --surface-container-high: #333538;
+  --line: #444746;
+  --line-strong: #5E5E5E;
+  --ink: #E3E3E3;
+  --ink-2: #C4C7C5;
+  --ink-3: #8E918F;
+  --accent: #A8C7FA;
+  --accent-soft: #0842A0;
+  --accent-ink: #040C1A;
+  --success: #34A853;
+  --warning: #FBBC04;
+  --danger: #EA4335;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / .3), 0 1px 3px rgb(0 0 0 / .2);
+  --shadow-pop: 0 8px 24px rgb(0 0 0 / .4), 0 2px 6px rgb(0 0 0 / .3);
+  --shadow-sheet: 0 1px 2px rgb(0 0 0 / .4);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-folder-blue: var(--folder-blue);
+  --color-folder-red: var(--folder-red);
+  --color-folder-green: var(--folder-green);
+  --color-folder-amber: var(--folder-amber);
+  --color-folder-violet: var(--folder-violet);
+  --color-folder-pink: var(--folder-pink);
+  --color-folder-cyan: var(--folder-cyan);
+  --color-folder-slate: var(--folder-slate);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-pop: var(--shadow-pop);
+  --shadow-sheet: var(--shadow-sheet);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --radius-2xl: var(--r-2xl);
+  --radius-3xl: var(--r-3xl);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--canvas);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
