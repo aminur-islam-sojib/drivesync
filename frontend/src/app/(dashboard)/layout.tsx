@@ -10,6 +10,7 @@ import { DashboardTopbar } from '@/components/layout/topbar'
 import { DashboardSidebar } from '@/components/layout/sidebar'
 import { FilterChipsBar } from '@/components/layout/filter-chips-bar'
 import { InfoDrawer } from '@/components/layout/info-drawer'
+import { DialogHost } from '@/components/dialogs/dialog-host'
 
 export default function DashboardLayout({
   children,
@@ -91,6 +92,9 @@ export default function DashboardLayout({
         {/* Collapsible Info & Activity Drawer */}
         <InfoDrawer />
       </div>
+
+      {/* 3. Central Dialogs & Modals Controller */}
+      <DialogHost />
     </div>
   )
 }

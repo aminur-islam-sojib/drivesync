@@ -14,7 +14,9 @@ import {
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { useAccountStore } from '@/stores/account-store'
+import { useDialogStore } from '@/stores/dialog-store'
 import { api, formatApiError } from '@/lib/api'
+import { RoutingPolicyCard } from '@/components/accounts/routing-policy-card'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -23,6 +25,7 @@ export default function SettingsPage() {
 
   const connectedAccounts = useAccountStore((state) => state.connectedAccounts)
   const fetchAccountsAndStorage = useAccountStore((state) => state.fetchAccountsAndStorage)
+  const openDialog = useDialogStore((state) => state.openDialog)
 
   const [isConnecting, setIsConnecting] = React.useState(false)
   const [syncingAccountId, setSyncingAccountId] = React.useState<string | null>(null)
@@ -131,15 +134,25 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={handleConnectGoogle}
-            disabled={isConnecting}
-            className="flex h-9 items-center gap-2 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-ink shadow-sm hover:opacity-90 active:scale-98 transition-all cursor-pointer disabled:opacity-50"
-          >
-            <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
-            <span>Connect Google Drive</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => openDialog('s3-config')}
+              className="flex h-9 items-center gap-2 rounded-xl border border-line bg-surface px-3.5 text-xs font-semibold text-ink shadow-2xs hover:bg-surface-2 transition-all cursor-pointer"
+            >
+              <Database className="h-3.5 w-3.5 text-amber-500" />
+              <span>Connect S3</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleConnectGoogle}
+              disabled={isConnecting}
+              className="flex h-9 items-center gap-2 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-ink shadow-sm hover:opacity-90 active:scale-98 transition-all cursor-pointer disabled:opacity-50"
+            >
+              <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
+              <span>Connect Google Drive</span>
+            </button>
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -198,6 +211,9 @@ export default function SettingsPage() {
           )}
         </div>
       </section>
+
+      {/* Upload Routing Policy */}
+      <RoutingPolicyCard />
 
       {/* Security & Sign Out */}
       <section className="rounded-3xl border border-line bg-surface p-6 sm:p-7 space-y-4 shadow-xs">

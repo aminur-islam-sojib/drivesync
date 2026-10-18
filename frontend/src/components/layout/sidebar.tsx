@@ -23,6 +23,7 @@ import { useAccountStore } from '@/stores/account-store'
 import { useUIStore } from '@/stores/ui-store'
 import { useDialogStore } from '@/stores/dialog-store'
 import { formatBytes } from '@/lib/utils'
+import { MultiAccountStorageBar } from '@/components/accounts/multi-account-storage-bar'
 
 interface NavItem {
   label: string
@@ -240,13 +241,8 @@ export function DashboardSidebar() {
             <span className="text-[11px] font-bold text-ink-2">{percentage}%</span>
           </div>
 
-          {/* Segmented Progress Bar */}
-          <div className="h-2 w-full rounded-full bg-surface-container-high overflow-hidden">
-            <div
-              className="h-full rounded-full bg-accent transition-all duration-300"
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
+          {/* Multi-Account Segmented Progress Bar */}
+          <MultiAccountStorageBar compact />
 
           <div className="mt-2 flex items-center justify-between text-[11px] text-ink-3">
             <span>

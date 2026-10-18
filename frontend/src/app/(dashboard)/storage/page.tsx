@@ -13,6 +13,8 @@ import { toast } from 'sonner'
 import { useAccountStore } from '@/stores/account-store'
 import { useDialogStore } from '@/stores/dialog-store'
 import { formatBytes } from '@/lib/utils'
+import { MultiAccountStorageBar } from '@/components/accounts/multi-account-storage-bar'
+import { RoutingPolicyCard } from '@/components/accounts/routing-policy-card'
 
 export default function StoragePage() {
   const connectedAccounts = useAccountStore((state) => state.connectedAccounts)
@@ -97,17 +99,10 @@ export default function StoragePage() {
           </div>
         </div>
 
-        {/* Big Progress Bar */}
-        <div className="space-y-2">
-          <div className="h-4 w-full rounded-full bg-surface-container-high overflow-hidden p-0.5">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                percentage > 90 ? 'bg-danger' : percentage > 75 ? 'bg-amber-500' : 'bg-accent'
-              }`}
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-xs text-ink-3">
+        {/* Multi-Account Segmented Storage Visualizer */}
+        <div className="space-y-3">
+          <MultiAccountStorageBar showLegend />
+          <div className="flex justify-between text-xs text-ink-3 pt-1">
             <span>{percentage}% utilized</span>
             <span>{100 - percentage}% remaining across all pooled accounts</span>
           </div>
@@ -211,6 +206,9 @@ export default function StoragePage() {
           </div>
         )}
       </section>
+
+      {/* Upload Routing Strategy */}
+      <RoutingPolicyCard />
     </div>
   )
 }
