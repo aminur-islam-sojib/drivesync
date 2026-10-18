@@ -43,7 +43,10 @@ export function FilePreviewModal() {
     url: string | null
   } | null>(null)
 
-  const previewUrl = loadedPreview?.fileId === activeFile?.id ? loadedPreview.url : null
+  const previewUrl =
+    activeFile?.id && loadedPreview?.fileId === activeFile.id
+      ? loadedPreview?.url ?? null
+      : null
   const isLoadingToken = Boolean(
     activeFile?.id &&
       activeDialog === 'file-preview' &&

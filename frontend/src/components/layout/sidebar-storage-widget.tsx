@@ -44,3 +44,4 @@ export function SidebarStorageWidget({ onNavigate }: SidebarStorageWidgetProps) 
     </div>
   )
 }
+

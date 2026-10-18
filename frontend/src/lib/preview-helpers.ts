@@ -65,3 +65,4 @@ export function getFilePreviewKind(fileName: string, mimeType = ''): PreviewKind
 
   return 'generic'
 }
+

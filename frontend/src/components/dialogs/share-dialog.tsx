@@ -39,7 +39,8 @@ export function ShareDialog({ onShareUpdated }: ShareDialogProps) {
   const [isUpdatingGoogle, setIsUpdatingGoogle] = React.useState(false)
   const [isRevoking, setIsRevoking] = React.useState(false)
 
-  const shareUrl = loadedShare?.fileId === fileId ? loadedShare.url : null
+  const shareUrl =
+    fileId && loadedShare?.fileId === fileId ? loadedShare?.url ?? null : null
   const isLoading = Boolean(
     fileId && activeDialog === 'share' && (!loadedShare || loadedShare.fileId !== fileId)
   )

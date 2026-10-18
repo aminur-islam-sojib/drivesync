@@ -126,3 +126,4 @@ export function ImageViewer({ src, alt }: ImageViewerProps) {
     </div>
   )
 }
+
