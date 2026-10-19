@@ -78,7 +78,7 @@ export function DashboardTopbar() {
   const userInitial = user?.name ? user.name[0].toUpperCase() : 'U'
 
   return (
-    <header className="flex h-16 w-full shrink-0 items-center justify-between gap-4 px-4 sm:px-6 bg-canvas border-b border-line/40 select-none">
+    <header className="flex h-16 w-full shrink-0 items-center justify-between gap-4 px-4 sm:px-6 bg-canvas select-none">
       {/* Left: Mobile Menu & Brand */}
       <div className="flex items-center gap-3">
         <button

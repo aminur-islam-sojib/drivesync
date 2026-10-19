@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { useAccountStore } from '@/stores/account-store'
@@ -58,17 +57,6 @@ export default function DashboardLayout({
     return () => window.removeEventListener('message', handleMessage)
   }, [fetchAccountsAndStorage])
 
-  // If not hydrated yet or not authenticated, show smooth initial loader
-  if (!isHydrated || !isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-canvas">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
-          <p className="text-xs font-medium text-ink-3">Loading your DriveSync workspace...</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-canvas text-ink flex-col">
@@ -81,7 +69,7 @@ export default function DashboardLayout({
         <DashboardSidebar />
 
         {/* Main Stage: Material 3 Elevated Surface Container */}
-        <div className="flex flex-1 flex-col overflow-hidden m-2 lg:ml-0 rounded-3xl bg-surface border border-line shadow-card">
+        <div className="flex flex-1 flex-col overflow-hidden m-2 lg:ml-0 rounded-3xl bg-surface ">
           {/* Search Filter Chips Bar */}
           <FilterChipsBar />
 

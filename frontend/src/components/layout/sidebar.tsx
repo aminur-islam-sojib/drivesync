@@ -196,7 +196,7 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Desktop Persistent Rail */}
-      <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-canvas border-r border-line/40">
+      <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-canvas ">
         {content}
       </aside>
 
