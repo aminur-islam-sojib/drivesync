@@ -84,6 +84,10 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
     })
   }, [connectedAccounts, searchQuery, filterMode])
 
+  const hasAnyError = React.useMemo(() => {
+    return connectedAccounts.some((a) => a.status === 'error')
+  }, [connectedAccounts])
+
   const toggleFilterMode = () => {
     setFilterMode((prev) => (prev === 'all' ? 'connected' : prev === 'connected' ? 'error' : 'all'))
   }
@@ -119,19 +123,16 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
             <SlidersHorizontal className="h-3.5 w-3.5" />
           </button>
         </div>
-
-        {/* 2. Integrations / Drives List */}
         <div className="space-y-1">
           {/* Unified "All Drives" Row */}
           {searchQuery === '' && filterMode === 'all' && (
             <button
               type="button"
               onClick={() => handleAccountFilter(null)}
-              className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${
-                selectedAccountId === null
-                  ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
-                  : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
-              }`}
+              className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${selectedAccountId === null
+                ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
+                : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
+                }`}
             >
               <div className="flex items-center gap-2.5 min-w-0 pr-2">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs">
@@ -147,11 +148,21 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
                 </div>
               </div>
 
-              {/* Connected Pill Badge */}
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                <span>Connected</span>
-              </span>
+              {/* Dynamic Status Indicator: Green for Connected, Red for Error */}
+              <div
+                className={`inline-flex items-center justify-center h-6 w-6 rounded-full border shrink-0 transition-all ${
+                  hasAnyError
+                    ? 'border-danger/30 bg-danger/10'
+                    : 'border-emerald-500/25 bg-emerald-500/10'
+                }`}
+                title={hasAnyError ? 'Some drives have connection issues' : 'All drives connected'}
+              >
+                <span
+                  className={`h-2 w-2 rounded-full shrink-0 ${
+                    hasAnyError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
+                  }`}
+                />
+              </div>
             </button>
           )}
 
@@ -168,11 +179,10 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
                 key={account.id}
                 type="button"
                 onClick={() => handleAccountFilter(account.id)}
-                className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${
-                  isSelected
-                    ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
-                    : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
-                }`}
+                className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${isSelected
+                  ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
+                  : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
+                  }`}
               >
                 {/* Left: Squircle Icon + Name & Email */}
                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
@@ -206,18 +216,21 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
                   </div>
                 </div>
 
-                {/* Right: Pill Badge matching Reference UI */}
-                {isError ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-danger/30 bg-danger/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-danger shrink-0">
-                    <span className="h-1.5 w-1.5 rounded-full bg-danger shrink-0" />
-                    <span>Error</span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                    <span>Connected</span>
-                  </span>
-                )}
+                {/* Right: Dynamic Connection Dot (Green for Connected, Red for Error) */}
+                <div
+                  className={`inline-flex items-center justify-center h-6 w-6 rounded-full border shrink-0 transition-all ${
+                    isError
+                      ? 'border-danger/30 bg-danger/10'
+                      : 'border-emerald-500/25 bg-emerald-500/10'
+                  }`}
+                  title={isError ? 'Connection error' : 'Connected'}
+                >
+                  <span
+                    className={`h-2 w-2 rounded-full shrink-0 ${
+                      isError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
+                    }`}
+                  />
+                </div>
               </button>
             )
           })}
