@@ -112,7 +112,7 @@ function UploadTaskRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between text-xs mb-1">
-          <p className="truncate font-semibold text-ink max-w-[180px]" title={task.fileName}>
+          <p className="truncate font-semibold text-ink max-w-45" title={task.fileName}>
             {task.fileName}
           </p>
           <span className="font-mono text-[10px] text-ink-3 tabular-nums shrink-0 ml-2">
