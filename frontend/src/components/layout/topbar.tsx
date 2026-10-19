@@ -5,9 +5,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import {
-  Search,
-  X,
-  SlidersHorizontal,
   CloudCheck,
   Info,
   Sun,
@@ -22,6 +19,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import { useAccountStore } from '@/stores/account-store'
 import { useUIStore } from '@/stores/ui-store'
 import { formatBytes } from '@/lib/utils'
+import { SearchOmnibox } from './search-omnibox'
 
 function subscribeTheme(callback: () => void) {
   if (typeof window === 'undefined') return () => {}
@@ -48,19 +46,9 @@ export function DashboardTopbar() {
   const isInfoDrawerOpen = useUIStore((state) => state.isInfoDrawerOpen)
   const toggleInfoDrawer = useUIStore((state) => state.toggleInfoDrawer)
 
-  const searchQuery = useAccountStore((state) => state.filters.search || '')
-  const setFilter = useAccountStore((state) => state.setFilter)
   const storageSummary = useAccountStore((state) => state.storageSummary)
   const isLoading = useAccountStore((state) => state.isLoading)
   const connectedAccounts = useAccountStore((state) => state.connectedAccounts)
-
-  const handleSearchChange = (val: string) => {
-    setFilter('search', val || undefined)
-  }
-
-  const handleClearSearch = () => {
-    setFilter('search', undefined)
-  }
 
   const toggleTheme = () => {
     if (isDark) {
@@ -105,39 +93,9 @@ export function DashboardTopbar() {
         </Link>
       </div>
 
-      {/* Center: Google Drive Material 3 Search Pill */}
+      {/* Center: Google Drive Material 3 Omnibox Search */}
       <div className="flex-1 max-w-2xl mx-auto">
-        <div className="relative flex items-center w-full">
-          <div className="absolute left-3.5 flex items-center pointer-events-none text-ink-3">
-            <Search className="h-4.5 w-4.5" />
-          </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Search files and folders across all drives..."
-            className="h-11 w-full rounded-full border border-transparent bg-surface-2 pl-10 pr-20 text-xs sm:text-sm text-ink placeholder:text-ink-3 transition-all focus:border-accent/40 focus:bg-surface focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/15"
-          />
-          <div className="absolute right-3 flex items-center gap-1 text-ink-3">
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="flex h-6 w-6 items-center justify-center rounded-full hover:bg-surface-container-high hover:text-ink transition-colors cursor-pointer"
-                title="Clear search"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-            <button
-              type="button"
-              className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-surface-container-high hover:text-ink transition-colors cursor-pointer"
-              title="Search filters"
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
+        <SearchOmnibox />
       </div>
 
       {/* Right Cluster: Health, Info Drawer, Theme, Profile */}

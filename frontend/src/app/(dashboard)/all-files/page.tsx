@@ -84,8 +84,10 @@ function AllFilesContent() {
 
         const needsFolderMetadata = !useWorkspaceStore.getState().currentFolder && Boolean(currentFolderId)
 
+        const folderParams = filters.search ? { q: filters.search } : { parentId: currentFolderId ?? undefined }
+
         const [folderRes, fileRes, allFoldersRes] = await Promise.all([
-          api.get('/folders', { params: { parentId: currentFolderId ?? undefined } }),
+          api.get('/folders', { params: folderParams }),
           api.get('/files', { params: fileParams }),
           needsFolderMetadata ? api.get('/folders?all=1') : Promise.resolve(null),
         ])
@@ -182,7 +184,7 @@ function AllFilesContent() {
       <WorkspaceToolbar sortBy={sortBy} onCycleSort={cycleSort} />
 
       {/* 2. Connected Drives Wayfinding Strip */}
-      {/* <ConnectedDrivesStrip /> */}
+      <ConnectedDrivesStrip />
 
       {/* 3. Zero Connected Accounts Onboarding Banner */}
       {!isLoading && connectedAccounts.length === 0 && (

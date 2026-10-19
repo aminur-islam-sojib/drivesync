@@ -59,7 +59,7 @@ fileRouter.get('/', async (req: AuthRequest, res, next) => {
       userId: req.user!.id,
       status: 'active',
       ...(query.folderId ? { folderId: query.folderId } : {}),
-      ...(query.q ? { name: { contains: query.q } } : {}),
+      ...(query.q ? { name: { contains: query.q, mode: 'insensitive' } } : {}),
       ...(query.accountId ? { connectedAccountId: query.accountId } : {}),
       ...(query.kind ? { mimeType: { in: typeFilters[query.kind] || [] } } : {}),
       ...(query.minSize !== undefined || query.maxSize !== undefined ? {

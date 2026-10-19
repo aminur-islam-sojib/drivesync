@@ -82,9 +82,26 @@ async function ensureProviderFolderIds(
 
 folderRouter.get('/', async (req: AuthRequest, res, next) => {
   try {
-    const query = z.object({ parentId: z.string().nullable().optional(), all: z.string().optional() }).parse(req.query)
+    const query = z
+      .object({
+        parentId: z.string().nullable().optional(),
+        all: z.string().optional(),
+        q: z.string().trim().max(255).optional(),
+      })
+      .parse(req.query)
+
+    const where: any = {
+      userId: req.user!.id,
+      deletedAt: null,
+      ...(query.q
+        ? { name: { contains: query.q, mode: 'insensitive' } }
+        : query.all === '1'
+          ? {}
+          : { parentId: query.parentId ?? null }),
+    }
+
     const folders = await prisma.folder.findMany({
-      where: { userId: req.user!.id, deletedAt: null, ...(query.all === '1' ? {} : { parentId: query.parentId ?? null }) },
+      where,
       select: { id: true, name: true, color: true, iconUrl: true, parentId: true, providerFolderId: true, createdAt: true, updatedAt: true },
       orderBy: { updatedAt: 'desc' },
     })
