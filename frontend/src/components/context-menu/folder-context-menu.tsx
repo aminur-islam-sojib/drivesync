@@ -26,9 +26,7 @@ export function FolderContextMenu({
 
   const handleOpen = () => {
     useWorkspaceStore.getState().openFolderInstantly({ id: folder.id, name: folder.name })
-    if (typeof window !== 'undefined' && window.location.pathname !== '/all-files') {
-      router.push(`/all-files?folderId=${folder.id}`)
-    }
+    router.push(`/all-files?folderId=${folder.id}`, { scroll: false })
   }
 
   const handleDelete = async () => {

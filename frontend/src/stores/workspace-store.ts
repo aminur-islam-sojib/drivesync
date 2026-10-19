@@ -68,13 +68,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       },
       folderCrumbs: newCrumbs,
     })
-
-    // Update browser URL without full router transition overhead
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href)
-      url.searchParams.set('folderId', folder.id)
-      window.history.pushState({ folderId: folder.id }, '', url.toString())
-    }
   },
 
   navigateCrumb: (crumbId) => {
@@ -85,17 +78,15 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         currentFolder: null,
         folderCrumbs: [{ id: null, name: 'All Files' }],
       })
-      if (typeof window !== 'undefined') {
-        const url = new URL(window.location.href)
-        url.searchParams.delete('folderId')
-        window.history.pushState({ folderId: null }, '', url.toString())
-      }
       return
     }
 
     const idx = folderCrumbs.findIndex((c) => c.id === crumbId)
-    const crumb = folderCrumbs[idx]
-    const newCrumbs = idx >= 0 ? folderCrumbs.slice(0, idx + 1) : folderCrumbs
+    const crumb = idx >= 0 ? folderCrumbs[idx] : null
+    const newCrumbs =
+      idx >= 0
+        ? folderCrumbs.slice(0, idx + 1)
+        : [{ id: null, name: 'All Files' }, { id: crumbId, name: '...' }]
 
     set({
       currentFolderId: crumbId,
@@ -113,12 +104,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         : null,
       folderCrumbs: newCrumbs,
     })
-
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href)
-      url.searchParams.set('folderId', crumbId)
-      window.history.pushState({ folderId: crumbId }, '', url.toString())
-    }
   },
 
   setCachedData: (key, folders, files) => {

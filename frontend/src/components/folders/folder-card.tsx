@@ -46,7 +46,7 @@ export const FolderCard = React.memo(function FolderCard({
       if (onSelect) onSelect(e)
       return
     }
-    // Single click instantly opens folder
+    if (onSelect) onSelect(e)
     handleOpen()
   }
 

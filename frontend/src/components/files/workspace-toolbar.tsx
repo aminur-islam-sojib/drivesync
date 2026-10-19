@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import {
   LayoutGrid,
   List,
@@ -21,6 +22,7 @@ interface WorkspaceToolbarProps {
 }
 
 export function WorkspaceToolbar({ sortBy, onCycleSort }: WorkspaceToolbarProps) {
+  const router = useRouter()
   const viewMode = useUIStore((state) => state.viewMode)
   const setViewMode = useUIStore((state) => state.setViewMode)
   const openDialog = useDialogStore((state) => state.openDialog)
@@ -29,6 +31,15 @@ export function WorkspaceToolbar({ sortBy, onCycleSort }: WorkspaceToolbarProps)
   const currentFolder = useWorkspaceStore((state) => state.currentFolder)
   const folderCrumbs = useWorkspaceStore((state) => state.folderCrumbs)
   const navigateCrumb = useWorkspaceStore((state) => state.navigateCrumb)
+
+  const handleCrumbClick = (crumbId: string | null) => {
+    navigateCrumb(crumbId)
+    if (crumbId) {
+      router.push(`/all-files?folderId=${crumbId}`, { scroll: false })
+    } else {
+      router.push('/all-files', { scroll: false })
+    }
+  }
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-line/40 select-none">
@@ -45,7 +56,7 @@ export function WorkspaceToolbar({ sortBy, onCycleSort }: WorkspaceToolbarProps)
                 ) : (
                   <button
                     type="button"
-                    onClick={() => navigateCrumb(crumb.id)}
+                    onClick={() => handleCrumbClick(crumb.id)}
                     className="hover:text-ink transition-colors cursor-pointer"
                   >
                     {crumb.name}
@@ -118,3 +129,4 @@ export function WorkspaceToolbar({ sortBy, onCycleSort }: WorkspaceToolbarProps)
     </div>
   )
 }
+

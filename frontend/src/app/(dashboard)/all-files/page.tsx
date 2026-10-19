@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Plus, CloudUpload, FolderOpen } from 'lucide-react'
 import { useUIStore } from '@/stores/ui-store'
 import { useAccountStore } from '@/stores/account-store'
@@ -16,6 +16,7 @@ import { api } from '@/lib/api'
 import { FolderItem, FileItem } from '@/lib/types'
 
 function AllFilesContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const urlFolderId = searchParams.get('folderId')
 
@@ -28,7 +29,6 @@ function AllFilesContent() {
 
   // Workspace store for instant 0ms folder transitions and in-memory cache
   const currentFolderId = useWorkspaceStore((state) => state.currentFolderId)
-  const currentFolder = useWorkspaceStore((state) => state.currentFolder)
   const openFolderInstantly = useWorkspaceStore((state) => state.openFolderInstantly)
   const navigateCrumb = useWorkspaceStore((state) => state.navigateCrumb)
   const setCurrentFolder = useWorkspaceStore((state) => state.setCurrentFolder)
@@ -46,19 +46,20 @@ function AllFilesContent() {
   const [sortBy, setSortBy] = React.useState<SortOption>('name-asc')
   const [refreshIndex, setRefreshIndex] = React.useState(0)
 
-  // Sync initial URL searchParams or browser Back/Forward (popstate)
+  // Synchronize when URL searchParams changes externally (browser Back/Forward, sidebar link, initial mount)
   React.useEffect(() => {
-    if (urlFolderId !== currentFolderId) {
+    if (urlFolderId !== useWorkspaceStore.getState().currentFolderId) {
       navigateCrumb(urlFolderId)
     }
+  }, [urlFolderId, navigateCrumb])
 
-    const handlePopState = () => {
-      const p = new URLSearchParams(window.location.search).get('folderId')
-      navigateCrumb(p)
-    }
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [urlFolderId, currentFolderId, navigateCrumb])
+  const handleOpenFolder = React.useCallback(
+    (folder: FolderItem) => {
+      openFolderInstantly({ id: folder.id, name: folder.name })
+      router.push(`/all-files?folderId=${folder.id}`, { scroll: false })
+    },
+    [openFolderInstantly, router]
+  )
 
   const refreshData = React.useCallback(() => {
     invalidateCache()
@@ -66,7 +67,7 @@ function AllFilesContent() {
     setRefreshIndex((prev) => prev + 1)
   }, [invalidateCache])
 
-  // Instant streaming fetch with concurrent requests
+  // Streaming data fetch with concurrent requests
   React.useEffect(() => {
     let isMounted = true
 
@@ -81,10 +82,12 @@ function AllFilesContent() {
           fileParams.kind = filters.type
         }
 
+        const needsFolderMetadata = !useWorkspaceStore.getState().currentFolder && Boolean(currentFolderId)
+
         const [folderRes, fileRes, allFoldersRes] = await Promise.all([
           api.get('/folders', { params: { parentId: currentFolderId ?? undefined } }),
           api.get('/files', { params: fileParams }),
-          !currentFolder && currentFolderId ? api.get('/folders?all=1') : Promise.resolve(null),
+          needsFolderMetadata ? api.get('/folders?all=1') : Promise.resolve(null),
         ])
 
         if (!isMounted) return
@@ -130,7 +133,6 @@ function AllFilesContent() {
     filters.search,
     filters.type,
     refreshIndex,
-    currentFolder,
     cacheKey,
     setCachedData,
     setCurrentFolder,
@@ -138,7 +140,7 @@ function AllFilesContent() {
     invalidateCache,
   ])
 
-  // Derived instant data: if cache is fresh, display immediately; otherwise fallback to server data
+  // Derived instant data: if cache is available, display immediately; otherwise fallback to server data
   const isLoaded = isCacheFresh || loadedKey === cacheKey
   const folders = isCacheFresh && cachedContent ? cachedContent.folders : serverFolders
   const files = isCacheFresh && cachedContent ? cachedContent.files : serverFiles
@@ -206,7 +208,7 @@ function AllFilesContent() {
         folders={sortedFolders}
         isLoading={isLoading}
         onFolderMutated={refreshData}
-        onOpenFolder={(f) => openFolderInstantly({ id: f.id, name: f.name })}
+        onOpenFolder={handleOpenFolder}
       />
 
       {/* 4. Files Section (Dual View: Grid or List) */}
