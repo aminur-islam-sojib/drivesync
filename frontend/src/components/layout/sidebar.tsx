@@ -160,33 +160,32 @@ export function DashboardSidebar() {
           />
         </div>
 
-      <div className="flex flex-col justify-between gap-2.5">
+        <div className="flex flex-col justify-between gap-2.5 pb-5">
           {/* Primary Navigation Links */}
-        <nav className="space-y-1 ">
-          {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href
-            const Icon = item.icon
-            
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={handleNavClick}
-                className={`flex h-10 items-center gap-3.5 rounded-full px-4 text-xs font-medium transition-all ${
-                  isActive
+          <nav className="space-y-1 ">
+            {NAV_ITEMS.map((item) => {
+              const isActive = pathname === item.href
+              const Icon = item.icon
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={handleNavClick}
+                  className={`flex h-10 items-center gap-3.5 rounded-full px-4 text-xs font-medium transition-all ${isActive
                     ? 'bg-accent-soft text-accent font-semibold shadow-xs'
                     : 'text-ink-2 hover:bg-surface-2 hover:text-ink'
-                }`}
-              >
-                <Icon className={`h-4.5 w-4.5 ${isActive ? 'text-accent' : 'text-ink-3'}`} />
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
-        </nav>
-        {/* Multi-Account Connected Section */}
-        <SidebarDrivesSection onSelectAccount={handleNavClick} />
-      </div>
+                    }`}
+                >
+                  <Icon className={`h-4.5 w-4.5 ${isActive ? 'text-accent' : 'text-ink-3'}`} />
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
+          </nav>
+          {/* Multi-Account Connected Section */}
+          <SidebarDrivesSection onSelectAccount={handleNavClick} />
+        </div>
       </div>
       {/* Aggregated Storage Pool Meter */}
       <SidebarStorageWidget onNavigate={handleNavClick} />

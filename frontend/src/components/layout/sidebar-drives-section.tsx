@@ -93,183 +93,150 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
   }
 
   return (
-    <div className="pt-2">
-      {/* Elevated Card Container matching Reference UI */}
-      <div className="rounded-2xl bg-surface-2 p-2.5 border border-line/20 ">
-        {/* 1. Search Bar with Filter Icon */}
-        <div className="flex items-center gap-1.5 mb-2.5">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink-3 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search"
-              className="h-8 w-full rounded-xl border border-line bg-surface-2/60 pl-8 pr-2.5 text-xs text-ink placeholder:text-ink-3 outline-none focus:border-accent focus:bg-surface transition-all"
-            />
-          </div>
+    < div className="rounded-2xl bg-surface-2 p-2.5 border border-line/20 " >
 
+
+
+      {/* 1. Search Bar with Filter Icon */}
+
+      < div className="border-line/60 flex items-center justify-between px-1" >
+        <button
+          type="button"
+          onClick={() => openDialog('connect-drive')}
+          className="flex items-center gap-2 text-xs font-semibold text-ink hover:text-accent transition-colors cursor-pointer group"
+        >
+          <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full border border-line text-ink-2 group-hover:border-accent group-hover:text-accent group-hover:bg-accent-soft/40 transition-all">
+            <Plus className="h-3 w-3 stroke-[2.5]" />
+          </div>
+          <span>Add integration</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            router.push('/settings')
+            onSelectAccount?.()
+          }}
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-ink-3 hover:text-ink hover:bg-surface-2 transition-all cursor-pointer"
+          title="Settings"
+          aria-label="Settings"
+        >
+          <Settings className="h-4 w-4" />
+        </button>
+      </div >
+
+      <div className="space-y-1 border-t border-line/70  p-2.5 mt-2">
+        {/* Unified "All Drives" Row */}
+        {searchQuery === '' && filterMode === 'all' && (
           <button
             type="button"
-            onClick={toggleFilterMode}
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border transition-all cursor-pointer ${
-              filterMode !== 'all'
-                ? 'border-accent bg-accent-soft text-accent'
-                : 'border-line bg-surface-2/60 text-ink-3 hover:text-ink hover:bg-surface'
-            }`}
-            title={`Filter status: ${filterMode}`}
-            aria-label="Filter status"
+            onClick={() => handleAccountFilter(null)}
+            className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${selectedAccountId === null
+              ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
+              : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
+              }`}
           >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-2.5 min-w-0 pr-2">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs">
+                <Cloud className="h-4.5 w-4.5 text-[#0284c7]" />
+              </div>
+              <div className="min-w-0">
+                <span className="block text-xs font-bold text-ink truncate leading-tight group-hover:text-accent transition-colors">
+                  All Drives
+                </span>
+                <span className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal">
+                  cloud.unified
+                </span>
+              </div>
+            </div>
+
+            {/* Dynamic Status Indicator: Green for Connected, Red for Error */}
+            <div
+              className={`inline-flex items-center justify-center h-6 w-6 `}
+              title={hasAnyError ? 'Some drives have connection issues' : 'All drives connected'}
+            >
+              <span
+                className={`h-2 w-2 rounded-full shrink-0 ${hasAnyError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
+                  }`}
+              />
+            </div>
           </button>
-        </div>
-        <div className="space-y-1">
-          {/* Unified "All Drives" Row */}
-          {searchQuery === '' && filterMode === 'all' && (
+        )}
+
+        {/* Connected Account Drives */}
+        {filteredAccounts.map((account) => {
+          const isSelected = selectedAccountId === account.id
+          const isError = account.status === 'error'
+          const isGoogle = account.provider === 'google_drive'
+          const displayName =
+            account.displayName || (isGoogle ? 'Google Drive' : 'S3 Storage')
+
+          return (
             <button
+              key={account.id}
               type="button"
-              onClick={() => handleAccountFilter(null)}
-              className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${selectedAccountId === null
+              onClick={() => handleAccountFilter(account.id)}
+              className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${isSelected
                 ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
                 : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
                 }`}
             >
+              {/* Left: Squircle Icon + Name & Email */}
               <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs">
-                  <Cloud className="h-4.5 w-4.5 text-[#0284c7]" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs overflow-hidden">
+                  {account.avatarUrl ? (
+                    <Image
+                      src={account.avatarUrl}
+                      alt={account.email}
+                      width={36}
+                      height={36}
+                      className="h-full w-full object-cover"
+                      unoptimized
+                    />
+                  ) : isGoogle ? (
+                    <GoogleDriveLogo className="h-4.5 w-4.5" />
+                  ) : (
+                    <Database className="h-4.5 w-4.5 text-amber-500" />
+                  )}
                 </div>
+
                 <div className="min-w-0">
                   <span className="block text-xs font-bold text-ink truncate leading-tight group-hover:text-accent transition-colors">
-                    All Drives
+                    {displayName}
                   </span>
-                  <span className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal">
-                    cloud.unified
+                  <span
+                    className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal"
+                    title={account.email}
+                  >
+                    {account.email}
                   </span>
                 </div>
               </div>
 
-              {/* Dynamic Status Indicator: Green for Connected, Red for Error */}
+              {/* Right: Dynamic Connection Dot (Green for Connected, Red for Error) */}
               <div
-                className={`inline-flex items-center justify-center h-6 w-6 rounded-full border shrink-0 transition-all ${
-                  hasAnyError
-                    ? 'border-danger/30 bg-danger/10'
-                    : 'border-emerald-500/25 bg-emerald-500/10'
-                }`}
-                title={hasAnyError ? 'Some drives have connection issues' : 'All drives connected'}
+                className={`inline-flex items-center justify-center h-6 w-6  shrink-0 transition-all  `}
+                title={isError ? 'Connection error' : 'Connected'}
               >
                 <span
-                  className={`h-2 w-2 rounded-full shrink-0 ${
-                    hasAnyError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
-                  }`}
+                  className={`h-2 w-2 rounded-full  ${isError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
+                    }`}
                 />
               </div>
             </button>
-          )}
+          )
+        })}
 
-          {/* Connected Account Drives */}
-          {filteredAccounts.map((account) => {
-            const isSelected = selectedAccountId === account.id
-            const isError = account.status === 'error'
-            const isGoogle = account.provider === 'google_drive'
-            const displayName =
-              account.displayName || (isGoogle ? 'Google Drive' : 'S3 Storage')
-
-            return (
-              <button
-                key={account.id}
-                type="button"
-                onClick={() => handleAccountFilter(account.id)}
-                className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${isSelected
-                  ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
-                  : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
-                  }`}
-              >
-                {/* Left: Squircle Icon + Name & Email */}
-                <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs overflow-hidden">
-                    {account.avatarUrl ? (
-                      <Image
-                        src={account.avatarUrl}
-                        alt={account.email}
-                        width={36}
-                        height={36}
-                        className="h-full w-full object-cover"
-                        unoptimized
-                      />
-                    ) : isGoogle ? (
-                      <GoogleDriveLogo className="h-4.5 w-4.5" />
-                    ) : (
-                      <Database className="h-4.5 w-4.5 text-amber-500" />
-                    )}
-                  </div>
-
-                  <div className="min-w-0">
-                    <span className="block text-xs font-bold text-ink truncate leading-tight group-hover:text-accent transition-colors">
-                      {displayName}
-                    </span>
-                    <span
-                      className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal"
-                      title={account.email}
-                    >
-                      {account.email}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right: Dynamic Connection Dot (Green for Connected, Red for Error) */}
-                <div
-                  className={`inline-flex items-center justify-center h-6 w-6 rounded-full border shrink-0 transition-all ${
-                    isError
-                      ? 'border-danger/30 bg-danger/10'
-                      : 'border-emerald-500/25 bg-emerald-500/10'
-                  }`}
-                  title={isError ? 'Connection error' : 'Connected'}
-                >
-                  <span
-                    className={`h-2 w-2 rounded-full shrink-0 ${
-                      isError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
-                    }`}
-                  />
-                </div>
-              </button>
-            )
-          })}
-
-          {/* Empty search or zero accounts */}
-          {filteredAccounts.length === 0 && (
-            <div className="py-4 text-center">
-              <p className="text-xs text-ink-3">No matching drives</p>
-            </div>
-          )}
-        </div>
-
-        {/* 3. Bottom Footer matching Reference UI: (+) Add integration + Settings */}
-        <div className="mt-2 pt-2 border-t border-line/60 flex items-center justify-between px-1">
-          <button
-            type="button"
-            onClick={() => openDialog('connect-drive')}
-            className="flex items-center gap-2 text-xs font-semibold text-ink hover:text-accent transition-colors cursor-pointer group"
-          >
-            <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full border border-line text-ink-2 group-hover:border-accent group-hover:text-accent group-hover:bg-accent-soft/40 transition-all">
-              <Plus className="h-3 w-3 stroke-[2.5]" />
-            </div>
-            <span>Add integration</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              router.push('/settings')
-              onSelectAccount?.()
-            }}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-ink-3 hover:text-ink hover:bg-surface-2 transition-all cursor-pointer"
-            title="Settings"
-            aria-label="Settings"
-          >
-            <Settings className="h-4 w-4" />
-          </button>
-        </div>
+        {/* Empty search or zero accounts */}
+        {filteredAccounts.length === 0 && (
+          <div className="py-4 text-center">
+            <p className="text-xs text-ink-3">No matching drives</p>
+          </div>
+        )}
       </div>
-    </div>
+
+    </div >
+
+
   )
 }

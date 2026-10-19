@@ -201,9 +201,8 @@ export default function TrashPage() {
                   return (
                     <tr
                       key={file.id}
-                      className={`hover:bg-surface-2 transition-colors ${
-                        isSelected ? 'bg-accent-soft/20' : ''
-                      }`}
+                      className={`hover:bg-surface-2 transition-colors ${isSelected ? 'bg-accent-soft/20' : ''
+                        }`}
                     >
                       <td className="px-4 py-3">
                         <input
