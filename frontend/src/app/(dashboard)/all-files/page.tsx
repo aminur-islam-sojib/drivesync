@@ -184,7 +184,7 @@ function AllFilesContent() {
       <WorkspaceToolbar sortBy={sortBy} onCycleSort={cycleSort} />
 
       {/* 2. Connected Drives Wayfinding Strip */}
-      <ConnectedDrivesStrip />
+      {/* <ConnectedDrivesStrip /> */}
 
       {/* 3. Zero Connected Accounts Onboarding Banner */}
       {!isLoading && connectedAccounts.length === 0 && (
