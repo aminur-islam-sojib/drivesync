@@ -3,11 +3,47 @@
 import * as React from 'react'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
-import { Layers, HardDrive, Database, Plus, AlertCircle } from 'lucide-react'
+import {
+  Search,
+  SlidersHorizontal,
+  Cloud,
+  Database,
+  Plus,
+  Settings,
+} from 'lucide-react'
 import { useAccountStore } from '@/stores/account-store'
 import { useDialogStore } from '@/stores/dialog-store'
-import { getAccountColor } from '@/components/accounts/multi-account-storage-bar'
-import { formatBytes } from '@/lib/utils'
+
+function GoogleDriveLogo({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 87.3 78" className={className} fill="none">
+      <path
+        d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+        fill="#0066da"
+      />
+      <path
+        d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z"
+        fill="#00ac47"
+      />
+      <path
+        d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+        fill="#ea4335"
+      />
+      <path
+        d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.25z"
+        fill="#00832d"
+      />
+      <path
+        d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.25z"
+        fill="#2684fc"
+      />
+      <path
+        d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+        fill="#ffba00"
+      />
+    </svg>
+  )
+}
 
 interface SidebarDrivesSectionProps {
   onSelectAccount?: () => void
@@ -20,7 +56,9 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
   const connectedAccounts = useAccountStore((state) => state.connectedAccounts)
   const selectedAccountId = useAccountStore((state) => state.selectedAccountId)
   const setSelectedAccountId = useAccountStore((state) => state.setSelectedAccountId)
-  const storageSummary = useAccountStore((state) => state.storageSummary)
+
+  const [searchQuery, setSearchQuery] = React.useState('')
+  const [filterMode, setFilterMode] = React.useState<'all' | 'connected' | 'error'>('all')
 
   const handleAccountFilter = (accountId: string | null) => {
     setSelectedAccountId(accountId)
@@ -30,155 +68,137 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
     onSelectAccount?.()
   }
 
-  // Aggregated totals for the "All Connected Drives" item
-  const totalUsed = Number(storageSummary?.usedBytes || 0)
-  const totalCapacity = Number(storageSummary?.totalBytes || 0)
-  const totalPct =
-    totalCapacity > 0 ? Math.min(100, Math.round((totalUsed / totalCapacity) * 100)) : 0
+  // Filter accounts based on search input and filter mode
+  const filteredAccounts = React.useMemo(() => {
+    return connectedAccounts.filter((account) => {
+      const matchesSearch =
+        searchQuery.trim() === '' ||
+        (account.displayName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        account.email.toLowerCase().includes(searchQuery.toLowerCase())
+
+      if (!matchesSearch) return false
+
+      if (filterMode === 'connected') return account.status === 'connected'
+      if (filterMode === 'error') return account.status === 'error'
+      return true
+    })
+  }, [connectedAccounts, searchQuery, filterMode])
+
+  const toggleFilterMode = () => {
+    setFilterMode((prev) => (prev === 'all' ? 'connected' : prev === 'connected' ? 'error' : 'all'))
+  }
 
   return (
-    <div className="pt-3 border-t border-line/60">
-      {/* Header with Title & Add Action */}
-      <div className="flex items-center justify-between px-2 mb-2.5">
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-3">
-            Connected Drives
-          </span>
-          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-surface-2 px-1 text-[10px] font-bold text-ink-3 border border-line/40">
-            {connectedAccounts.length}
-          </span>
-        </div>
-        <button
-          type="button"
-          onClick={() => openDialog('connect-drive')}
-          className="flex items-center gap-1 text-[11px] font-semibold text-accent hover:underline cursor-pointer transition-colors"
-          title="Connect another drive"
-        >
-          <Plus className="h-3 w-3 stroke-[2.5]" />
-          <span>Add</span>
-        </button>
-      </div>
-
-      <div className="space-y-1.5">
-        {/* 1. All Connected Drives (Unified Pool) */}
-        <button
-          type="button"
-          onClick={() => handleAccountFilter(null)}
-          className={`flex flex-col w-full text-left p-2.5 rounded-2xl border transition-all cursor-pointer ${
-            selectedAccountId === null
-              ? 'bg-accent-soft/40 border-accent/40 shadow-xs ring-1 ring-accent/30'
-              : 'border-transparent hover:border-line/60 hover:bg-surface-2/60 text-ink-2'
-          }`}
-        >
-          <div className="flex items-center justify-between gap-2 w-full">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
-                <Layers className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <span className="block text-xs font-semibold text-ink truncate">
-                  All Connected Drives
-                </span>
-                <span className="block text-[10.5px] text-ink-3 truncate mt-0.5">
-                  Unified storage pool ({connectedAccounts.length} {connectedAccounts.length === 1 ? 'drive' : 'drives'})
-                </span>
-              </div>
-            </div>
-
-            {totalCapacity > 0 && (
-              <span className="text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-md bg-surface-2 text-ink-2 border border-line/40 shrink-0">
-                {totalPct}%
-              </span>
-            )}
+    <div className="pt-2">
+      {/* Elevated Card Container matching Reference UI */}
+      <div className="rounded-2xl border border-line bg-surface p-2.5 shadow-2xs">
+        {/* 1. Search Bar with Filter Icon */}
+        <div className="flex items-center gap-1.5 mb-2.5">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink-3 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search"
+              className="h-8 w-full rounded-xl border border-line bg-surface-2/60 pl-8 pr-2.5 text-xs text-ink placeholder:text-ink-3 outline-none focus:border-accent focus:bg-surface transition-all"
+            />
           </div>
 
-          {/* Micro Progress Track */}
-          {totalCapacity > 0 && (
-            <div className="mt-2 w-full space-y-1">
-              <div className="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-accent rounded-full transition-all duration-300"
-                  style={{ width: `${Math.max(totalPct, 2)}%` }}
-                />
-              </div>
-              <div className="flex items-center justify-between text-[10px] text-ink-3 tabular-nums">
-                <span>{formatBytes(totalUsed)} used</span>
-                <span>{formatBytes(totalCapacity)}</span>
-              </div>
-            </div>
-          )}
-        </button>
+          <button
+            type="button"
+            onClick={toggleFilterMode}
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border transition-all cursor-pointer ${
+              filterMode !== 'all'
+                ? 'border-accent bg-accent-soft text-accent'
+                : 'border-line bg-surface-2/60 text-ink-3 hover:text-ink hover:bg-surface'
+            }`}
+            title={`Filter status: ${filterMode}`}
+            aria-label="Filter status"
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+          </button>
+        </div>
 
-        {/* 2. Individual Drive Items with Display Name, Email & Analyzed UI */}
-        {connectedAccounts.map((account, index) => {
-          const isSelected = selectedAccountId === account.id
-          const isError = account.status === 'error'
-          const isGoogle = account.provider === 'google_drive'
-          const accountColor = getAccountColor(index)
-
-          // Find analyzed metrics from storage summary
-          const metric = storageSummary?.accounts?.find(
-            (m) => m.id === account.id || m.email === account.email
-          )
-          const usedBytes = Number(metric?.usedBytes ?? account.storageAccount?.usedBytes ?? 0)
-          const totalBytes = Number(metric?.totalBytes ?? account.storageAccount?.totalBytes ?? 0)
-          const pct =
-            metric?.percentage ??
-            (totalBytes > 0 ? Math.min(100, Math.round((usedBytes / totalBytes) * 100)) : 0)
-
-          const driveTitle =
-            account.displayName || (isGoogle ? 'Google Drive' : 'S3 Storage')
-
-          return (
+        {/* 2. Integrations / Drives List */}
+        <div className="space-y-1">
+          {/* Unified "All Drives" Row */}
+          {searchQuery === '' && filterMode === 'all' && (
             <button
-              key={account.id}
               type="button"
-              onClick={() => handleAccountFilter(account.id)}
-              className={`flex flex-col w-full text-left p-2.5 rounded-2xl border transition-all cursor-pointer ${
-                isSelected
-                  ? 'bg-accent-soft/40 border-accent/40 shadow-xs ring-1 ring-accent/30'
-                  : 'border-transparent hover:border-line/60 hover:bg-surface-2/60 text-ink-2'
+              onClick={() => handleAccountFilter(null)}
+              className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${
+                selectedAccountId === null
+                  ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
+                  : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
               }`}
             >
-              {/* Account Identity: Avatar/Icon + Title + Email */}
-              <div className="flex items-start justify-between gap-2 w-full">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="relative shrink-0">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs overflow-hidden">
-                      {account.avatarUrl ? (
-                        <Image
-                          src={account.avatarUrl}
-                          alt={account.email}
-                          width={32}
-                          height={32}
-                          className="h-full w-full object-cover"
-                          unoptimized
-                        />
-                      ) : isGoogle ? (
-                        <div className="flex h-full w-full items-center justify-center bg-[#4285F4]/10 text-[#4285F4]">
-                          <HardDrive className="h-4 w-4 stroke-[2.2]" />
-                        </div>
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-amber-500/10 text-amber-600">
-                          <Database className="h-4 w-4 stroke-[2.2]" />
-                        </div>
-                      )}
-                    </div>
-                    {/* Status Indicator Dot */}
-                    <span
-                      className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-surface shrink-0 ${
-                        isError ? 'bg-danger animate-pulse' : 'bg-success'
-                      }`}
-                    />
+              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs">
+                  <Cloud className="h-4.5 w-4.5 text-[#0284c7]" />
+                </div>
+                <div className="min-w-0">
+                  <span className="block text-xs font-bold text-ink truncate leading-tight group-hover:text-accent transition-colors">
+                    All Drives
+                  </span>
+                  <span className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal">
+                    cloud.unified
+                  </span>
+                </div>
+              </div>
+
+              {/* Connected Pill Badge */}
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                <span>Connected</span>
+              </span>
+            </button>
+          )}
+
+          {/* Connected Account Drives */}
+          {filteredAccounts.map((account) => {
+            const isSelected = selectedAccountId === account.id
+            const isError = account.status === 'error'
+            const isGoogle = account.provider === 'google_drive'
+            const displayName =
+              account.displayName || (isGoogle ? 'Google Drive' : 'S3 Storage')
+
+            return (
+              <button
+                key={account.id}
+                type="button"
+                onClick={() => handleAccountFilter(account.id)}
+                className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${
+                  isSelected
+                    ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
+                    : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
+                }`}
+              >
+                {/* Left: Squircle Icon + Name & Email */}
+                <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs overflow-hidden">
+                    {account.avatarUrl ? (
+                      <Image
+                        src={account.avatarUrl}
+                        alt={account.email}
+                        width={36}
+                        height={36}
+                        className="h-full w-full object-cover"
+                        unoptimized
+                      />
+                    ) : isGoogle ? (
+                      <GoogleDriveLogo className="h-4.5 w-4.5" />
+                    ) : (
+                      <Database className="h-4.5 w-4.5 text-amber-500" />
+                    )}
                   </div>
 
-                  {/* Title & Email Address */}
                   <div className="min-w-0">
-                    <span className="block text-xs font-semibold text-ink truncate leading-tight">
-                      {driveTitle}
+                    <span className="block text-xs font-bold text-ink truncate leading-tight group-hover:text-accent transition-colors">
+                      {displayName}
                     </span>
                     <span
-                      className="block text-[10.5px] text-ink-3 truncate mt-0.5 leading-tight font-normal"
+                      className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal"
                       title={account.email}
                     >
                       {account.email}
@@ -186,56 +206,56 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
                   </div>
                 </div>
 
-                {/* Analyzed Percentage Badge or Status */}
+                {/* Right: Pill Badge matching Reference UI */}
                 {isError ? (
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-danger bg-danger/10 px-1.5 py-0.5 rounded-md border border-danger/20 shrink-0">
-                    <AlertCircle className="h-3 w-3" />
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-danger/30 bg-danger/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-danger shrink-0">
+                    <span className="h-1.5 w-1.5 rounded-full bg-danger shrink-0" />
                     <span>Error</span>
                   </span>
                 ) : (
-                  totalBytes > 0 && (
-                    <span className="text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-md bg-surface-2 text-ink-2 border border-line/40 shrink-0">
-                      {pct}%
-                    </span>
-                  )
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    <span>Connected</span>
+                  </span>
                 )}
-              </div>
+              </button>
+            )
+          })}
 
-              {/* Analyzed Storage Utilization Micro Bar */}
-              {totalBytes > 0 && !isError && (
-                <div className="mt-2 w-full space-y-1">
-                  <div className="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-300"
-                      style={{
-                        width: `${Math.max(pct, 2)}%`,
-                        backgroundColor: accountColor,
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between text-[10px] text-ink-3 tabular-nums">
-                    <span>{formatBytes(usedBytes)} used</span>
-                    <span>{formatBytes(totalBytes)}</span>
-                  </div>
-                </div>
-              )}
-            </button>
-          )
-        })}
+          {/* Empty search or zero accounts */}
+          {filteredAccounts.length === 0 && (
+            <div className="py-4 text-center">
+              <p className="text-xs text-ink-3">No matching drives</p>
+            </div>
+          )}
+        </div>
 
-        {/* Empty state when 0 accounts */}
-        {connectedAccounts.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-line/60 p-3.5 text-center bg-surface/40 my-1">
-            <p className="text-xs text-ink-3">No drives connected yet</p>
-            <button
-              type="button"
-              onClick={() => openDialog('connect-drive')}
-              className="mt-1 text-xs text-accent font-semibold hover:underline cursor-pointer"
-            >
-              + Connect Google Drive
-            </button>
-          </div>
-        )}
+        {/* 3. Bottom Footer matching Reference UI: (+) Add integration + Settings */}
+        <div className="mt-2 pt-2 border-t border-line/60 flex items-center justify-between px-1">
+          <button
+            type="button"
+            onClick={() => openDialog('connect-drive')}
+            className="flex items-center gap-2 text-xs font-semibold text-ink hover:text-accent transition-colors cursor-pointer group"
+          >
+            <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full border border-line text-ink-2 group-hover:border-accent group-hover:text-accent group-hover:bg-accent-soft/40 transition-all">
+              <Plus className="h-3 w-3 stroke-[2.5]" />
+            </div>
+            <span>Add integration</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              router.push('/settings')
+              onSelectAccount?.()
+            }}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-ink-3 hover:text-ink hover:bg-surface-2 transition-all cursor-pointer"
+            title="Settings"
+            aria-label="Settings"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </div>
   )
