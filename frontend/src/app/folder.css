@@ -73,9 +73,3 @@ button:focus-visible .folder__sheet,
   transform: translateY(-16%);
 }
 
-.folder[data-selected="true"] {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: var(--r-lg, 14px);
-}
-
