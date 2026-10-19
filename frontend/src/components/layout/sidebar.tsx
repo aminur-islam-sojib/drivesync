@@ -160,12 +160,13 @@ export function DashboardSidebar() {
           />
         </div>
 
-        {/* Primary Navigation Links */}
-        <nav className="space-y-1">
+      <div className="flex flex-col justify-between gap-2.5">
+          {/* Primary Navigation Links */}
+        <nav className="space-y-1 ">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href
             const Icon = item.icon
-
+            
             return (
               <Link
                 key={item.href}
@@ -183,11 +184,10 @@ export function DashboardSidebar() {
             )
           })}
         </nav>
-
         {/* Multi-Account Connected Section */}
         <SidebarDrivesSection onSelectAccount={handleNavClick} />
       </div>
-
+      </div>
       {/* Aggregated Storage Pool Meter */}
       <SidebarStorageWidget onNavigate={handleNavClick} />
     </div>

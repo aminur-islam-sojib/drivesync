@@ -95,7 +95,7 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
   return (
     <div className="pt-2">
       {/* Elevated Card Container matching Reference UI */}
-      <div className="rounded-2xl border border-line bg-surface p-2.5 shadow-2xs">
+      <div className="rounded-2xl bg-surface-2 p-2.5 border border-line/20 ">
         {/* 1. Search Bar with Filter Icon */}
         <div className="flex items-center gap-1.5 mb-2.5">
           <div className="relative flex-1">
