@@ -15,7 +15,7 @@ import { SelectionBar } from '@/components/files/selection-bar'
 import { api } from '@/lib/api'
 import { FolderItem, FileItem } from '@/lib/types'
 
-export default function AllFilesPage() {
+function AllFilesContent() {
   const searchParams = useSearchParams()
   const urlFolderId = searchParams.get('folderId')
 
@@ -255,5 +255,13 @@ export default function AllFilesPage() {
       {/* 5. Floating Multi-Selection Batch Actions Bar */}
       <SelectionBar onItemsMutated={refreshData} />
     </div>
+  )
+}
+
+export default function AllFilesPage() {
+  return (
+    <React.Suspense fallback={<div className="p-4 sm:p-6 space-y-6 animate-pulse" />}>
+      <AllFilesContent />
+    </React.Suspense>
   )
 }
