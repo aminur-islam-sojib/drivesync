@@ -81,7 +81,8 @@ function EditorModalContent({
           ? fileName.trim()
           : `${fileName.trim()}.md`
 
-        const blob = new Blob([textToSave], { type: 'text/markdown' })
+        const safeText = textToSave.length > 0 ? textToSave : '\n'
+        const blob = new Blob([safeText], { type: 'text/markdown' })
         const formData = new FormData()
         formData.append('sizeBytes', String(blob.size))
         formData.append('fileName', nameToUse)
@@ -92,6 +93,7 @@ function EditorModalContent({
 
         setSaveStatus('saved')
         setLastSavedAt(new Date())
+        toast.success(`Note "${nameToUse}" saved!`)
 
         // Notify file browser to refresh items
         if (typeof window !== 'undefined') {
@@ -141,8 +143,9 @@ function EditorModalContent({
   return (
     <Dialog.Content
       aria-describedby={undefined}
-      className="fixed inset-2 sm:inset-6 z-50 flex flex-col rounded-3xl border border-line bg-surface shadow-pop outline-none animate-in fade-in zoom-in-95 overflow-hidden"
+      className="fixed inset-2 sm:inset-6 z-[60] flex flex-col rounded-3xl border border-line bg-surface shadow-pop outline-none animate-in fade-in zoom-in-95 overflow-hidden"
     >
+      <Dialog.Title className="sr-only">Markdown Note - {fileName}</Dialog.Title>
       {/* Top Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-line bg-surface-2/40 select-none">
         <div className="flex items-center gap-3 min-w-0">
@@ -274,15 +277,17 @@ export function MarkdownEditorModal() {
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && closeDialog()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs animate-in fade-in" />
         {isOpen && (
-          <EditorModalContent
-            key={fileId || 'editor-content'}
-            fileId={fileId}
-            initialFileName={fileName}
-            folderId={folderId}
-            closeDialog={closeDialog}
-          />
+          <>
+            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs animate-in fade-in" />
+            <EditorModalContent
+              key={fileId || 'editor-content'}
+              fileId={fileId}
+              initialFileName={fileName}
+              folderId={folderId}
+              closeDialog={closeDialog}
+            />
+          </>
         )}
       </Dialog.Portal>
     </Dialog.Root>

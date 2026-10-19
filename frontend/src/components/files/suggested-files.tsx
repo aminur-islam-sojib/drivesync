@@ -135,7 +135,7 @@ export function SuggestedFiles({
                 }}
                 className={`group relative flex flex-col justify-between rounded-2xl border p-3.5 transition-all duration-150 cursor-pointer text-left select-none outline-none ${
                   isSelected
-                    ? 'border-accent bg-accent-soft/40 shadow-sm ring-1 ring-accent'
+                    ? 'border-accent bg-accent-soft/40  ring-1 ring-accent'
                     : 'border-line bg-surface hover:border-line-strong hover:shadow-card hover:-translate-y-0.5'
                 }`}
               >

@@ -72,7 +72,7 @@ export const FolderCard = React.memo(function FolderCard({
       onKeyDown={handleKeyDown}
       onContextMenu={onOpenContextMenu}
       className={`group relative flex flex-col cursor-pointer rounded-2xl p-2.5 transition-all outline-none select-none ${
-        selected ? 'bg-accent-soft/40 shadow-xs ring-2 ring-accent' : 'hover:bg-surface-2/70'
+        selected ? 'bg-accent-soft/40' : 'hover:bg-surface-2/70'
       }`}
       aria-label={`${name}, ${fileCount} files, ${sizeLabel}`}
     >
