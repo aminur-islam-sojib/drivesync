@@ -1,21 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import {
-  LayoutGrid,
-  List,
-  ArrowUpDown,
-  Plus,
-  FileEdit,
-  CloudUpload,
-  ChevronRight,
-  FolderOpen,
-} from 'lucide-react'
+import { Plus, CloudUpload, FolderOpen } from 'lucide-react'
 import { useUIStore } from '@/stores/ui-store'
 import { useAccountStore } from '@/stores/account-store'
 import { useDialogStore } from '@/stores/dialog-store'
+import { useWorkspaceStore } from '@/stores/workspace-store'
+import { WorkspaceToolbar, SortOption } from '@/components/files/workspace-toolbar'
 import { FolderGrid } from '@/components/folders/folder-grid'
 import { FileTable } from '@/components/files/file-table'
 import { FileGrid } from '@/components/files/file-grid'
@@ -23,79 +15,134 @@ import { SelectionBar } from '@/components/files/selection-bar'
 import { api } from '@/lib/api'
 import { FolderItem, FileItem } from '@/lib/types'
 
-type SortOption = 'name-asc' | 'name-desc' | 'size-desc' | 'size-asc' | 'date-desc'
-
 export default function AllFilesPage() {
   const searchParams = useSearchParams()
-  const folderId = searchParams.get('folderId')
+  const urlFolderId = searchParams.get('folderId')
 
   const viewMode = useUIStore((state) => state.viewMode)
-  const setViewMode = useUIStore((state) => state.setViewMode)
   const openDialog = useDialogStore((state) => state.openDialog)
 
   const connectedAccounts = useAccountStore((state) => state.connectedAccounts)
   const selectedAccountId = useAccountStore((state) => state.selectedAccountId)
   const filters = useAccountStore((state) => state.filters)
 
-  const [folders, setFolders] = React.useState<FolderItem[]>([])
-  const [files, setFiles] = React.useState<FileItem[]>([])
-  const [currentFolder, setCurrentFolder] = React.useState<FolderItem | null>(null)
-  const [isLoading, setIsLoading] = React.useState(true)
+  // Workspace store for instant 0ms folder transitions and in-memory cache
+  const currentFolderId = useWorkspaceStore((state) => state.currentFolderId)
+  const currentFolder = useWorkspaceStore((state) => state.currentFolder)
+  const openFolderInstantly = useWorkspaceStore((state) => state.openFolderInstantly)
+  const navigateCrumb = useWorkspaceStore((state) => state.navigateCrumb)
+  const setCurrentFolder = useWorkspaceStore((state) => state.setCurrentFolder)
+  const setFolderCrumbs = useWorkspaceStore((state) => state.setFolderCrumbs)
+  const setCachedData = useWorkspaceStore((state) => state.setCachedData)
+  const invalidateCache = useWorkspaceStore((state) => state.invalidateCache)
+
+  const cacheKey = `${currentFolderId ?? 'root'}:${selectedAccountId || ''}:${filters.search || ''}:${filters.type || ''}`
+  const cachedContent = useWorkspaceStore((state) => state.folderCache[cacheKey])
+  const isCacheFresh = Boolean(cachedContent)
+
+  const [serverFolders, setServerFolders] = React.useState<FolderItem[]>([])
+  const [serverFiles, setServerFiles] = React.useState<FileItem[]>([])
+  const [loadedKey, setLoadedKey] = React.useState<string | null>(null)
   const [sortBy, setSortBy] = React.useState<SortOption>('name-asc')
-
   const [refreshIndex, setRefreshIndex] = React.useState(0)
-  const refreshData = React.useCallback(() => {
-    setRefreshIndex((prev) => prev + 1)
-  }, [])
 
+  // Sync initial URL searchParams or browser Back/Forward (popstate)
+  React.useEffect(() => {
+    if (urlFolderId !== currentFolderId) {
+      navigateCrumb(urlFolderId)
+    }
+
+    const handlePopState = () => {
+      const p = new URLSearchParams(window.location.search).get('folderId')
+      navigateCrumb(p)
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [urlFolderId, currentFolderId, navigateCrumb])
+
+  const refreshData = React.useCallback(() => {
+    invalidateCache()
+    setLoadedKey(null)
+    setRefreshIndex((prev) => prev + 1)
+  }, [invalidateCache])
+
+  // Instant streaming fetch with concurrent requests
   React.useEffect(() => {
     let isMounted = true
 
     async function loadWorkspaceData() {
       try {
-        const folderRes = await api.get('/folders', {
-          params: { parentId: folderId ?? undefined },
-        })
         const fileParams: Record<string, string | number | undefined> = {
-          folderId: folderId ?? undefined,
+          folderId: currentFolderId ?? undefined,
           q: filters.search || undefined,
           accountId: selectedAccountId || undefined,
         }
         if (filters.type) {
           fileParams.kind = filters.type
         }
-        const fileRes = await api.get('/files', { params: fileParams })
 
-        let current: FolderItem | null = null
-        if (folderId) {
-          const allRes = await api.get('/folders?all=1')
-          current = (allRes.data?.folders || []).find((f: FolderItem) => f.id === folderId) || null
+        const [folderRes, fileRes, allFoldersRes] = await Promise.all([
+          api.get('/folders', { params: { parentId: currentFolderId ?? undefined } }),
+          api.get('/files', { params: fileParams }),
+          !currentFolder && currentFolderId ? api.get('/folders?all=1') : Promise.resolve(null),
+        ])
+
+        if (!isMounted) return
+
+        const fetchedFolders: FolderItem[] = folderRes.data?.folders || []
+        const fetchedFiles: FileItem[] = fileRes.data?.files || []
+
+        if (allFoldersRes?.data?.folders && currentFolderId) {
+          const match = allFoldersRes.data.folders.find((f: FolderItem) => f.id === currentFolderId)
+          if (match) {
+            setCurrentFolder(match)
+            setFolderCrumbs([
+              { id: null, name: 'All Files' },
+              { id: match.id, name: match.name },
+            ])
+          }
         }
 
-        if (isMounted) {
-          setFolders(folderRes.data?.folders || [])
-          setFiles(fileRes.data?.files || [])
-          setCurrentFolder(current)
-          setIsLoading(false)
-        }
+        setServerFolders(fetchedFolders)
+        setServerFiles(fetchedFiles)
+        setLoadedKey(cacheKey)
+        setCachedData(cacheKey, fetchedFolders, fetchedFiles)
       } catch {
-        if (isMounted) {
-          setIsLoading(false)
-        }
+        if (isMounted) setLoadedKey(cacheKey)
       }
     }
 
     void loadWorkspaceData()
 
-    const handleRefresh = () => {
+    const handleExternalRefresh = () => {
+      invalidateCache()
+      setLoadedKey(null)
       void loadWorkspaceData()
     }
-    window.addEventListener('drivesync-refresh-items', handleRefresh)
+    window.addEventListener('drivesync-refresh-items', handleExternalRefresh)
     return () => {
       isMounted = false
-      window.removeEventListener('drivesync-refresh-items', handleRefresh)
+      window.removeEventListener('drivesync-refresh-items', handleExternalRefresh)
     }
-  }, [folderId, selectedAccountId, filters.search, filters.type, refreshIndex])
+  }, [
+    currentFolderId,
+    selectedAccountId,
+    filters.search,
+    filters.type,
+    refreshIndex,
+    currentFolder,
+    cacheKey,
+    setCachedData,
+    setCurrentFolder,
+    setFolderCrumbs,
+    invalidateCache,
+  ])
+
+  // Derived instant data: if cache is fresh, display immediately; otherwise fallback to server data
+  const isLoaded = isCacheFresh || loadedKey === cacheKey
+  const folders = isCacheFresh && cachedContent ? cachedContent.folders : serverFolders
+  const files = isCacheFresh && cachedContent ? cachedContent.files : serverFiles
+  const isLoading = !isLoaded
 
   // Sorting
   const sortedFiles = React.useMemo(() => {
@@ -120,95 +167,15 @@ export default function AllFilesPage() {
     return [...folders].sort((a, b) => a.name.localeCompare(b.name))
   }, [folders])
 
+  const cycleSort = () => {
+    const opts: SortOption[] = ['name-asc', 'name-desc', 'size-desc', 'size-asc', 'date-desc']
+    setSortBy(opts[(opts.indexOf(sortBy) + 1) % opts.length])
+  }
+
   return (
     <div className="p-4 sm:p-6 space-y-6 pb-24">
       {/* 1. Header Toolbar: Title, Breadcrumbs & View Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-line/40 select-none">
-        <div>
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-ink-3">
-            <Link href="/all-files" className="hover:text-ink transition-colors">
-              DriveSync
-            </Link>
-            <ChevronRight className="h-3 w-3" />
-            <Link
-              href="/all-files"
-              className={folderId ? 'hover:text-ink transition-colors' : 'text-ink font-semibold'}
-            >
-              All Files
-            </Link>
-            {currentFolder && (
-              <>
-                <ChevronRight className="h-3 w-3" />
-                <span className="text-accent font-semibold truncate max-w-xs">
-                  {currentFolder.name}
-                </span>
-              </>
-            )}
-          </nav>
-
-          <h1 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-ink">
-            {currentFolder ? currentFolder.name : 'Unified Workspace'}
-          </h1>
-        </div>
-
-        {/* View Switcher & Actions */}
-        <div className="flex items-center gap-2 self-start sm:self-center">
-          <div className="flex items-center rounded-xl bg-surface-2 p-1 border border-line/40">
-            <button
-              type="button"
-              onClick={() => setViewMode('grid')}
-              className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all cursor-pointer ${
-                viewMode === 'grid' ? 'bg-surface text-ink shadow-xs' : 'text-ink-3 hover:text-ink'
-              }`}
-              title="Grid view"
-              aria-label="Grid view"
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('list')}
-              className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all cursor-pointer ${
-                viewMode === 'list' ? 'bg-surface text-ink shadow-xs' : 'text-ink-3 hover:text-ink'
-              }`}
-              title="List view"
-              aria-label="List view"
-            >
-              <List className="h-4 w-4" />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              const opts: SortOption[] = ['name-asc', 'name-desc', 'size-desc', 'size-asc', 'date-desc']
-              setSortBy(opts[(opts.indexOf(sortBy) + 1) % opts.length])
-            }}
-            className="flex h-9 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-xs font-medium text-ink-2 hover:bg-surface-2 hover:text-ink transition-colors cursor-pointer"
-          >
-            <ArrowUpDown className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Sort: {sortBy.replace('-', ' ')}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => openDialog('editor', { folderId, fileName: 'Untitled-Note.md' })}
-            className="flex h-9 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-xs font-semibold text-ink hover:bg-surface-2 transition-colors cursor-pointer"
-          >
-            <FileEdit className="h-3.5 w-3.5 text-accent" />
-            <span className="hidden sm:inline">New Note</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => openDialog('new-folder', { parentId: folderId })}
-            className="flex h-9 items-center gap-1.5 rounded-xl bg-accent px-3.5 text-xs font-semibold text-accent-ink hover:opacity-90 active:scale-98 transition-all cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
-            <span>New folder</span>
-          </button>
-        </div>
-      </div>
+      <WorkspaceToolbar sortBy={sortBy} onCycleSort={cycleSort} />
 
       {/* 2. Zero Connected Accounts Onboarding Banner */}
       {!isLoading && connectedAccounts.length === 0 && (
@@ -239,6 +206,7 @@ export default function AllFilesPage() {
         folders={sortedFolders}
         isLoading={isLoading}
         onFolderMutated={refreshData}
+        onOpenFolder={(f) => openFolderInstantly({ id: f.id, name: f.name })}
       />
 
       {/* 4. Files Section (Dual View: Grid or List) */}

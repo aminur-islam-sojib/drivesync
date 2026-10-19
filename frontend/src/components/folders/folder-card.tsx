@@ -15,6 +15,7 @@ export interface FolderCardProps {
   accounts?: FolderAccountBadge[]
   selected?: boolean
   onSelect?: (e: React.MouseEvent) => void
+  onOpen?: () => void
   onOpenContextMenu?: (e: React.MouseEvent) => void
 }
 
@@ -27,18 +28,26 @@ export const FolderCard = React.memo(function FolderCard({
   accounts = [],
   selected = false,
   onSelect,
+  onOpen,
   onOpenContextMenu,
 }: FolderCardProps) {
   const router = useRouter()
 
-  const handleOpen = () => {
-    router.push(`/all-files?folderId=${id}`)
-  }
+  const handleOpen = React.useCallback(() => {
+    if (onOpen) {
+      onOpen()
+    } else {
+      router.push(`/all-files?folderId=${id}`)
+    }
+  }, [onOpen, router, id])
 
   const handleClick = (e: React.MouseEvent) => {
-    if (onSelect) {
-      onSelect(e)
+    if (e.metaKey || e.ctrlKey || e.shiftKey) {
+      if (onSelect) onSelect(e)
+      return
     }
+    // Single click instantly opens folder
+    handleOpen()
   }
 
   const handleDoubleClick = (e: React.MouseEvent) => {

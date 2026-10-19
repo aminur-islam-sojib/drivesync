@@ -103,7 +103,7 @@ export function MarkdownEditor({
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className="outline-none min-h-[360px] text-ink leading-relaxed prose prose-neutral dark:prose-invert max-w-none"
+                className="outline-none min-h-90 text-ink leading-relaxed prose prose-neutral dark:prose-invert max-w-none"
                 aria-label="Markdown document body"
               />
             }

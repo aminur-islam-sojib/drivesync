@@ -157,7 +157,7 @@ function EditorModalContent({
               setSaveStatus('unsaved')
             }}
             placeholder="Document title"
-            className="text-sm sm:text-base font-bold text-ink bg-transparent border-none outline-none focus:ring-1 focus:ring-accent rounded px-1.5 py-0.5 truncate max-w-[200px] sm:max-w-md"
+            className="text-sm sm:text-base font-bold text-ink bg-transparent border-none outline-none focus:ring-1 focus:ring-accent rounded px-1.5 py-0.5 truncate max-w-50 sm:max-w-md"
           />
         </div>
 
@@ -168,11 +168,10 @@ function EditorModalContent({
             <button
               type="button"
               onClick={() => setMode('wysiwyg')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                mode === 'wysiwyg'
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${mode === 'wysiwyg'
                   ? 'bg-accent text-accent-ink shadow-2xs'
                   : 'text-ink-3 hover:text-ink'
-              }`}
+                }`}
             >
               <Eye className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Visual</span>
@@ -180,11 +179,10 @@ function EditorModalContent({
             <button
               type="button"
               onClick={() => setMode('raw')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                mode === 'raw'
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${mode === 'raw'
                   ? 'bg-accent text-accent-ink shadow-2xs'
                   : 'text-ink-3 hover:text-ink'
-              }`}
+                }`}
             >
               <Code2 className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Raw</span>

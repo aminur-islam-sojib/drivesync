@@ -7,6 +7,7 @@ import { FolderOpen, Edit3, FolderInput, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { FolderItem } from '@/lib/types'
 import { useDialogStore } from '@/stores/dialog-store'
+import { useWorkspaceStore } from '@/stores/workspace-store'
 import { api, formatApiError } from '@/lib/api'
 
 interface FolderContextMenuProps {
@@ -24,7 +25,10 @@ export function FolderContextMenu({
   const openDialog = useDialogStore((state) => state.openDialog)
 
   const handleOpen = () => {
-    router.push(`/all-files?folderId=${folder.id}`)
+    useWorkspaceStore.getState().openFolderInstantly({ id: folder.id, name: folder.name })
+    if (typeof window !== 'undefined' && window.location.pathname !== '/all-files') {
+      router.push(`/all-files?folderId=${folder.id}`)
+    }
   }
 
   const handleDelete = async () => {

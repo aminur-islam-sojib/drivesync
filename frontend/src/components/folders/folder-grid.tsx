@@ -13,12 +13,14 @@ interface FolderGridProps {
   folders: FolderItem[]
   isLoading?: boolean
   onFolderMutated?: () => void
+  onOpenFolder?: (folder: FolderItem) => void
 }
 
 export function FolderGrid({
   folders,
   isLoading = false,
   onFolderMutated,
+  onOpenFolder,
 }: FolderGridProps) {
   const selectedFolderIds = useSelectionStore((state) => state.selectedFolderIds)
   const selectItem = useSelectionStore((state) => state.selectItem)
@@ -90,6 +92,7 @@ export function FolderGrid({
                   sizeLabel={formatBytes(folder.totalBytes ?? 0)}
                   accounts={accounts}
                   selected={isSelected}
+                  onOpen={() => onOpenFolder?.(folder)}
                   onSelect={(e) => {
                     selectItem(folder.id, 'folder', e.metaKey || e.ctrlKey || e.shiftKey)
                   }}

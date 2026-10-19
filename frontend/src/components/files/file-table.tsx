@@ -43,8 +43,14 @@ export function FileTable({
 
   const handleRowClick = (e: React.MouseEvent, file: FileItem) => {
     const isMulti = e.metaKey || e.ctrlKey || e.shiftKey
-    selectItem(file.id, 'file', isMulti)
-    setSelectedItem(file.id, 'file')
+    if (isMulti) {
+      selectItem(file.id, 'file', true)
+      setSelectedItem(file.id, 'file')
+    } else {
+      selectItem(file.id, 'file', false)
+      setSelectedItem(file.id, 'file')
+      if (onFileDoubleClick) onFileDoubleClick(file)
+    }
   }
 
   const handleRowDoubleClick = (file: FileItem) => {

@@ -157,9 +157,8 @@ export function VideoPlayer({ src, title }: VideoPlayerProps) {
 
       {/* Floating Transport Bar */}
       <div
-        className={`absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 ${
-          showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`absolute inset-x-0 bottom-0 p-4 bg-linear-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
       >
         {/* Scrubber Range */}
         <div className="relative mb-3 flex items-center group/scrubber">
@@ -231,9 +230,8 @@ export function VideoPlayer({ src, title }: VideoPlayerProps) {
                   key={s}
                   type="button"
                   onClick={() => handleSpeedChange(s)}
-                  className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                    playbackRate === s ? 'bg-accent text-accent-ink font-bold' : 'hover:bg-white/10'
-                  }`}
+                  className={`px-1.5 py-0.5 rounded cursor-pointer ${playbackRate === s ? 'bg-accent text-accent-ink font-bold' : 'hover:bg-white/10'
+                    }`}
                 >
                   {s}x
                 </button>
