@@ -12,6 +12,7 @@ import { FolderGrid } from '@/components/folders/folder-grid'
 import { FileTable } from '@/components/files/file-table'
 import { FileGrid } from '@/components/files/file-grid'
 import { SelectionBar } from '@/components/files/selection-bar'
+import { SuggestedFiles } from '@/components/files/suggested-files'
 import { api } from '@/lib/api'
 import { FolderItem, FileItem } from '@/lib/types'
 
@@ -35,6 +36,7 @@ function AllFilesContent() {
   const setFolderCrumbs = useWorkspaceStore((state) => state.setFolderCrumbs)
   const setCachedData = useWorkspaceStore((state) => state.setCachedData)
   const invalidateCache = useWorkspaceStore((state) => state.invalidateCache)
+  const recordFileInteraction = useWorkspaceStore((state) => state.recordFileInteraction)
 
   const cacheKey = `${currentFolderId ?? 'root'}:${selectedAccountId || ''}:${filters.search || ''}:${filters.type || ''}`
   const cachedContent = useWorkspaceStore((state) => state.folderCache[cacheKey])
@@ -169,6 +171,14 @@ function AllFilesContent() {
     return [...folders].sort((a, b) => a.name.localeCompare(b.name))
   }, [folders])
 
+  const handleFilePreview = React.useCallback(
+    (file: FileItem) => {
+      recordFileInteraction(file.id)
+      openDialog('file-preview', { file, files: sortedFiles })
+    },
+    [recordFileInteraction, openDialog, sortedFiles]
+  )
+
   const cycleSort = () => {
     const opts: SortOption[] = ['name-asc', 'name-desc', 'size-desc', 'size-asc', 'date-desc']
     setSortBy(opts[(opts.indexOf(sortBy) + 1) % opts.length])
@@ -203,7 +213,17 @@ function AllFilesContent() {
         </div>
       )}
 
-      {/* 3. Signature Folder Cards Section */}
+      {/* 3. Suggested Files Section (Quick Access) */}
+      {/* {!currentFolderId && !filters.search && !filters.type && (
+        <SuggestedFiles
+          files={files}
+          isLoading={isLoading}
+          onFileMutated={refreshData}
+          onFileDoubleClick={handleFilePreview}
+        />
+      )} */}
+
+      {/* 4. Signature Folder Cards Section */}
       <FolderGrid
         folders={sortedFolders}
         isLoading={isLoading}
@@ -211,7 +231,7 @@ function AllFilesContent() {
         onOpenFolder={handleOpenFolder}
       />
 
-      {/* 4. Files Section (Dual View: Grid or List) */}
+      {/* 5. Files Section (Dual View: Grid or List) */}
       <section className="space-y-3" aria-label="Files">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold uppercase tracking-wider text-ink-3">
@@ -227,18 +247,14 @@ function AllFilesContent() {
             files={sortedFiles}
             isLoading={isLoading}
             onFileMutated={refreshData}
-            onFileDoubleClick={(file) =>
-              openDialog('file-preview', { file, files: sortedFiles })
-            }
+            onFileDoubleClick={handleFilePreview}
           />
         ) : (
           <FileGrid
             files={sortedFiles}
             isLoading={isLoading}
             onFileMutated={refreshData}
-            onFileDoubleClick={(file) =>
-              openDialog('file-preview', { file, files: sortedFiles })
-            }
+            onFileDoubleClick={handleFilePreview}
           />
         )}
 

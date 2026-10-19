@@ -1,13 +1,12 @@
 'use client'
 
 import * as React from 'react'
-import { useSearchParams } from 'next/navigation'
 import { CloudUpload } from 'lucide-react'
 import { useUploadStore } from '@/stores/upload-store'
+import { useWorkspaceStore } from '@/stores/workspace-store'
 
 export function UploadDropzone() {
-  const searchParams = useSearchParams()
-  const folderId = searchParams.get('folderId')
+  const folderId = useWorkspaceStore((state) => state.currentFolderId)
 
   const [isDragging, setIsDragging] = React.useState(false)
   const dragCounterRef = React.useRef(0)

@@ -18,7 +18,10 @@ interface WorkspaceState {
   folderCrumbs: FolderCrumb[]
   folderCache: Record<string, CachedContent>
 
+  recentInteractions: Record<string, number>
+
   // Actions
+  recordFileInteraction: (fileId: string) => void
   setCurrentFolderId: (id: string | null) => void
   setCurrentFolder: (folder: FolderItem | null) => void
   setFolderCrumbs: (crumbs: FolderCrumb[]) => void
@@ -36,6 +39,16 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   currentFolder: null,
   folderCrumbs: [{ id: null, name: 'All Files' }],
   folderCache: {},
+  recentInteractions: {},
+
+  recordFileInteraction: (fileId) => {
+    set((state) => ({
+      recentInteractions: {
+        ...state.recentInteractions,
+        [fileId]: Date.now(),
+      },
+    }))
+  },
 
   setCurrentFolderId: (id) => set({ currentFolderId: id }),
   setCurrentFolder: (folder) => set({ currentFolder: folder }),
