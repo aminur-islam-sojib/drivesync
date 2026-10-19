@@ -121,7 +121,7 @@ export function ShareDialog({ onShareUpdated }: ShareDialogProps) {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150" />
         <Dialog.Content
           aria-describedby={undefined}
-          className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-line bg-surface p-6 shadow-pop animate-in fade-in zoom-in-95 duration-150 select-none outline-none"
+          className="fixed left-1/2 top-1/2 z-[60] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-line bg-surface p-6 shadow-pop animate-in fade-in zoom-in-95 duration-150 select-none outline-none"
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-line/60">

@@ -67,7 +67,7 @@ export function NewFolderDialog({ onFolderCreated }: NewFolderDialogProps) {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs animate-in fade-in" />
         <Dialog.Content
           aria-describedby={undefined}
-          className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-pop outline-none animate-in fade-in zoom-in-95"
+          className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[60] w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-pop outline-none animate-in fade-in zoom-in-95"
         >
           <div className="flex items-center justify-between pb-4 border-b border-line">
             <div className="flex items-center gap-2.5">

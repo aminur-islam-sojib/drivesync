@@ -155,7 +155,7 @@ export function FilePreviewModal() {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" />
         <Dialog.Content
           aria-describedby={undefined}
-          className="fixed inset-0 z-50 flex flex-col justify-between p-3 sm:p-6 outline-none"
+          className="fixed inset-0 z-[60] flex flex-col justify-between p-3 sm:p-6 outline-none"
         >
           <Dialog.Title className="sr-only">Preview {activeFile.name}</Dialog.Title>
 

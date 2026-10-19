@@ -94,7 +94,7 @@ export function ConnectedAccountsModal() {
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && closeDialog()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-xs animate-in fade-in duration-150" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-line bg-surface p-6 sm:p-7 shadow-pop text-ink animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-[60] w-full max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-line bg-surface p-6 sm:p-7 shadow-pop text-ink animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-line">
             <div>
