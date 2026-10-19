@@ -8,11 +8,11 @@ import { useAccountStore } from '@/stores/account-store'
 import { useDialogStore } from '@/stores/dialog-store'
 import { useWorkspaceStore } from '@/stores/workspace-store'
 import { WorkspaceToolbar, SortOption } from '@/components/files/workspace-toolbar'
-import { FolderGrid } from '@/components/folders/folder-grid'
-import { FileTable } from '@/components/files/file-table'
-import { FileGrid } from '@/components/files/file-grid'
-import { SelectionBar } from '@/components/files/selection-bar'
+import { ConnectedDrivesStrip } from '@/components/files/connected-drives-strip'
 import { SuggestedFiles } from '@/components/files/suggested-files'
+import { FolderGrid } from '@/components/folders/folder-grid'
+import { WindowedFileList } from '@/components/files/windowed-file-list'
+import { SelectionBar } from '@/components/files/selection-bar'
 import { api } from '@/lib/api'
 import { FolderItem, FileItem } from '@/lib/types'
 
@@ -79,9 +79,7 @@ function AllFilesContent() {
           folderId: currentFolderId ?? undefined,
           q: filters.search || undefined,
           accountId: selectedAccountId || undefined,
-        }
-        if (filters.type) {
-          fileParams.kind = filters.type
+          ...(filters.type ? { kind: filters.type } : {}),
         }
 
         const needsFolderMetadata = !useWorkspaceStore.getState().currentFolder && Boolean(currentFolderId)
@@ -129,18 +127,7 @@ function AllFilesContent() {
       isMounted = false
       window.removeEventListener('drivesync-refresh-items', handleExternalRefresh)
     }
-  }, [
-    currentFolderId,
-    selectedAccountId,
-    filters.search,
-    filters.type,
-    refreshIndex,
-    cacheKey,
-    setCachedData,
-    setCurrentFolder,
-    setFolderCrumbs,
-    invalidateCache,
-  ])
+  }, [currentFolderId, selectedAccountId, filters.search, filters.type, refreshIndex, cacheKey, setCachedData, setCurrentFolder, setFolderCrumbs, invalidateCache])
 
   // Derived instant data: if cache is available, display immediately; otherwise fallback to server data
   const isLoaded = isCacheFresh || loadedKey === cacheKey
@@ -148,24 +135,29 @@ function AllFilesContent() {
   const files = isCacheFresh && cachedContent ? cachedContent.files : serverFiles
   const isLoading = !isLoaded
 
-  // Sorting
-  const sortedFiles = React.useMemo(() => {
-    const list = [...files]
-    switch (sortBy) {
-      case 'name-asc':
-        return list.sort((a, b) => a.name.localeCompare(b.name))
-      case 'name-desc':
-        return list.sort((a, b) => b.name.localeCompare(a.name))
-      case 'size-desc':
-        return list.sort((a, b) => Number(b.sizeBytes || 0) - Number(a.sizeBytes || 0))
-      case 'size-asc':
-        return list.sort((a, b) => Number(a.sizeBytes || 0) - Number(b.sizeBytes || 0))
-      case 'date-desc':
-        return list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      default:
-        return list
-    }
-  }, [files, sortBy])
+  const isSearching = Boolean(filters.search || filters.type)
+  const isRootView = !currentFolderId && !isSearching
+
+  // Strict Level Scoping:
+  // - Root view: only files directly in root (folderId === null)
+  // - Subfolder view: files belonging to that subfolder (folderId === currentFolderId)
+  // - Global search/filter: search across all folders
+  const scopedFiles = React.useMemo(() => {
+    if (isSearching) return files
+    if (currentFolderId) return files.filter((f) => f.folderId === currentFolderId)
+    return files.filter((f) => !f.folderId)
+  }, [files, isSearching, currentFolderId])
+
+  // Sorting scoped files
+  const sortedScopedFiles = React.useMemo(() => {
+    const list = [...scopedFiles]
+    if (sortBy === 'name-asc') return list.sort((a, b) => a.name.localeCompare(b.name))
+    if (sortBy === 'name-desc') return list.sort((a, b) => b.name.localeCompare(a.name))
+    if (sortBy === 'size-desc') return list.sort((a, b) => Number(b.sizeBytes || 0) - Number(a.sizeBytes || 0))
+    if (sortBy === 'size-asc') return list.sort((a, b) => Number(a.sizeBytes || 0) - Number(b.sizeBytes || 0))
+    if (sortBy === 'date-desc') return list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    return list
+  }, [scopedFiles, sortBy])
 
   const sortedFolders = React.useMemo(() => {
     return [...folders].sort((a, b) => a.name.localeCompare(b.name))
@@ -174,9 +166,9 @@ function AllFilesContent() {
   const handleFilePreview = React.useCallback(
     (file: FileItem) => {
       recordFileInteraction(file.id)
-      openDialog('file-preview', { file, files: sortedFiles })
+      openDialog('file-preview', { file, files: sortedScopedFiles })
     },
-    [recordFileInteraction, openDialog, sortedFiles]
+    [recordFileInteraction, openDialog, sortedScopedFiles]
   )
 
   const cycleSort = () => {
@@ -189,7 +181,10 @@ function AllFilesContent() {
       {/* 1. Header Toolbar: Title, Breadcrumbs & View Controls */}
       <WorkspaceToolbar sortBy={sortBy} onCycleSort={cycleSort} />
 
-      {/* 2. Zero Connected Accounts Onboarding Banner */}
+      {/* 2. Connected Drives Wayfinding Strip */}
+      {/* <ConnectedDrivesStrip /> */}
+
+      {/* 3. Zero Connected Accounts Onboarding Banner */}
       {!isLoading && connectedAccounts.length === 0 && (
         <div className="rounded-3xl border border-accent/20 bg-accent-soft/30 p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 my-8">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-ink shadow-sm">
@@ -213,17 +208,17 @@ function AllFilesContent() {
         </div>
       )}
 
-      {/* 3. Suggested Files Section (Quick Access) */}
-      {/* {!currentFolderId && !filters.search && !filters.type && (
+      {/* 4. Suggested Files Quick Access (Root view only) */}
+      {isRootView && (
         <SuggestedFiles
           files={files}
           isLoading={isLoading}
           onFileMutated={refreshData}
           onFileDoubleClick={handleFilePreview}
         />
-      )} */}
+      )}
 
-      {/* 4. Signature Folder Cards Section */}
+      {/* 5. Signature Folder Cards Section */}
       <FolderGrid
         folders={sortedFolders}
         isLoading={isLoading}
@@ -231,40 +226,40 @@ function AllFilesContent() {
         onOpenFolder={handleOpenFolder}
       />
 
-      {/* 5. Files Section (Dual View: Grid or List) */}
+      {/* 6. Progressive Scoped Files Section */}
       <section className="space-y-3" aria-label="Files">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold uppercase tracking-wider text-ink-3">
-            Files ({files.length})
+            {isSearching
+              ? `Search Results (${scopedFiles.length})`
+              : currentFolderId
+                ? `Folder Files (${scopedFiles.length})`
+                : `Root Files (${scopedFiles.length})`}
           </h2>
           <span className="text-xs text-ink-3">
             {connectedAccounts.length > 0 ? 'Aggregated across drives' : 'No drives connected'}
           </span>
         </div>
 
-        {viewMode === 'list' ? (
-          <FileTable
-            files={sortedFiles}
-            isLoading={isLoading}
-            onFileMutated={refreshData}
-            onFileDoubleClick={handleFilePreview}
-          />
-        ) : (
-          <FileGrid
-            files={sortedFiles}
-            isLoading={isLoading}
-            onFileMutated={refreshData}
-            onFileDoubleClick={handleFilePreview}
-          />
-        )}
+        <WindowedFileList
+          files={sortedScopedFiles}
+          viewMode={viewMode}
+          isLoading={isLoading}
+          onFileMutated={refreshData}
+          onFileDoubleClick={handleFilePreview}
+        />
 
-        {/* Empty State when no folders and no files */}
-        {!isLoading && folders.length === 0 && files.length === 0 && (
+        {/* Empty State when no folders and no files match scope */}
+        {!isLoading && folders.length === 0 && scopedFiles.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center text-ink-3 border border-dashed border-line rounded-3xl bg-surface/50">
             <FolderOpen className="h-10 w-10 mb-2 opacity-30 text-accent" />
-            <p className="text-xs font-semibold text-ink">This folder is empty</p>
+            <p className="text-xs font-semibold text-ink">
+              {isSearching ? 'No matching files or folders found' : 'This folder is empty'}
+            </p>
             <p className="text-[11px] max-w-xs mt-1 text-ink-3">
-              Drop files here or click &quot;Upload&quot; to add content into this location.
+              {isSearching
+                ? 'Try searching with different keywords or clearing filters.'
+                : 'Drop files here or click "Upload" to add content into this location.'}
             </p>
           </div>
         )}
