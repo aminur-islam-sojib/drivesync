@@ -21,8 +21,44 @@ const createSchema = z.object({
   parentId: z.string().nullable().optional(),
 })
 
-function serializeFolder(folder: { id: string; name: string; color: string; iconUrl?: string | null; parentId?: string | null; providerFolderId?: string | null; createdAt: Date; updatedAt: Date }) {
-  return { ...folder, providerFolderId: folder.providerFolderId ?? null, createdAt: folder.createdAt.toISOString(), updatedAt: folder.updatedAt.toISOString() }
+function serializeFolder(
+  folder: { id: string; name: string; color: string; iconUrl?: string | null; parentId?: string | null; providerFolderId?: string | null; createdAt: Date; updatedAt: Date },
+  metrics?: { fileCount: number; totalBytes: string }
+) {
+  return {
+    ...folder,
+    providerFolderId: folder.providerFolderId ?? null,
+    createdAt: folder.createdAt.toISOString(),
+    updatedAt: folder.updatedAt.toISOString(),
+    fileCount: metrics?.fileCount ?? 0,
+    totalBytes: metrics?.totalBytes ?? '0',
+  }
+}
+
+async function getFolderMetricsMap(folderIds: string[], userId: string) {
+  if (folderIds.length === 0) return new Map<string, { fileCount: number; totalBytes: string }>()
+  const aggregations = await prisma.file.groupBy({
+    by: ['folderId'],
+    where: {
+      userId,
+      status: 'active',
+      deletedAt: null,
+      folderId: { in: folderIds },
+    },
+    _count: { id: true },
+    _sum: { sizeBytes: true },
+  })
+
+  const metricsMap = new Map<string, { fileCount: number; totalBytes: string }>()
+  for (const agg of aggregations) {
+    if (agg.folderId) {
+      metricsMap.set(agg.folderId, {
+        fileCount: agg._count.id || 0,
+        totalBytes: (agg._sum.sizeBytes ?? 0n).toString(),
+      })
+    }
+  }
+  return metricsMap
 }
 
 async function ensureProviderFolderIds(
@@ -82,14 +118,32 @@ async function ensureProviderFolderIds(
 
 folderRouter.get('/', async (req: AuthRequest, res, next) => {
   try {
-    const query = z.object({ parentId: z.string().nullable().optional(), all: z.string().optional() }).parse(req.query)
+    const query = z
+      .object({
+        parentId: z.string().nullable().optional(),
+        all: z.string().optional(),
+        q: z.string().trim().max(255).optional(),
+      })
+      .parse(req.query)
+
+    const where: any = {
+      userId: req.user!.id,
+      deletedAt: null,
+      ...(query.q
+        ? { name: { contains: query.q, mode: 'insensitive' } }
+        : query.all === '1'
+          ? {}
+          : { parentId: query.parentId ?? null }),
+    }
+
     const folders = await prisma.folder.findMany({
-      where: { userId: req.user!.id, deletedAt: null, ...(query.all === '1' ? {} : { parentId: query.parentId ?? null }) },
+      where,
       select: { id: true, name: true, color: true, iconUrl: true, parentId: true, providerFolderId: true, createdAt: true, updatedAt: true },
       orderBy: { updatedAt: 'desc' },
     })
     await ensureProviderFolderIds(folders, req.user!.id)
-    return res.json({ folders: folders.map(serializeFolder) })
+    const metricsMap = await getFolderMetricsMap(folders.map((f) => f.id), req.user!.id)
+    return res.json({ folders: folders.map((f) => serializeFolder(f, metricsMap.get(f.id))) })
   } catch (error) {
     return next(error)
   }
@@ -105,7 +159,8 @@ folderRouter.get('/recent', async (req: AuthRequest, res, next) => {
       take: limit,
     })
     await ensureProviderFolderIds(folders, req.user!.id)
-    return res.json({ folders: folders.map(serializeFolder) })
+    const metricsMap = await getFolderMetricsMap(folders.map((f) => f.id), req.user!.id)
+    return res.json({ folders: folders.map((f) => serializeFolder(f, metricsMap.get(f.id))) })
   } catch (error) {
     return next(error)
   }
