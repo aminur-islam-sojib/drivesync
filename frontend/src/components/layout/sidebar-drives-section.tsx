@@ -4,8 +4,6 @@ import * as React from 'react'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import {
-  Search,
-  SlidersHorizontal,
   Cloud,
   Database,
   Plus,
@@ -57,9 +55,6 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
   const selectedAccountId = useAccountStore((state) => state.selectedAccountId)
   const setSelectedAccountId = useAccountStore((state) => state.setSelectedAccountId)
 
-  const [searchQuery, setSearchQuery] = React.useState('')
-  const [filterMode, setFilterMode] = React.useState<'all' | 'connected' | 'error'>('all')
-
   const handleAccountFilter = (accountId: string | null) => {
     setSelectedAccountId(accountId)
     if (pathname !== '/all-files') {
@@ -68,38 +63,13 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
     onSelectAccount?.()
   }
 
-  // Filter accounts based on search input and filter mode
-  const filteredAccounts = React.useMemo(() => {
-    return connectedAccounts.filter((account) => {
-      const matchesSearch =
-        searchQuery.trim() === '' ||
-        (account.displayName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        account.email.toLowerCase().includes(searchQuery.toLowerCase())
-
-      if (!matchesSearch) return false
-
-      if (filterMode === 'connected') return account.status === 'connected'
-      if (filterMode === 'error') return account.status === 'error'
-      return true
-    })
-  }, [connectedAccounts, searchQuery, filterMode])
-
   const hasAnyError = React.useMemo(() => {
     return connectedAccounts.some((a) => a.status === 'error')
   }, [connectedAccounts])
 
-  const toggleFilterMode = () => {
-    setFilterMode((prev) => (prev === 'all' ? 'connected' : prev === 'connected' ? 'error' : 'all'))
-  }
-
   return (
-    < div className="rounded-2xl bg-surface-2 p-2.5 border border-line/20 " >
-
-
-
-      {/* 1. Search Bar with Filter Icon */}
-
-      < div className="border-line/60 flex items-center justify-between px-1" >
+    <div className="rounded-2xl bg-surface-2 p-2.5 border border-line/20">
+      <div className="border-line/60 flex items-center justify-between px-1">
         <button
           type="button"
           onClick={() => openDialog('connect-drive')}
@@ -123,48 +93,46 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
         >
           <Settings className="h-4 w-4" />
         </button>
-      </div >
+      </div>
 
-      <div className="space-y-1 border-t border-line/70  p-2.5 mt-2">
+      <div className="space-y-1 border-t border-line/70 p-2.5 mt-2">
         {/* Unified "All Drives" Row */}
-        {searchQuery === '' && filterMode === 'all' && (
-          <button
-            type="button"
-            onClick={() => handleAccountFilter(null)}
-            className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${selectedAccountId === null
-              ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
-              : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
-              }`}
-          >
-            <div className="flex items-center gap-2.5 min-w-0 pr-2">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs">
-                <Cloud className="h-4.5 w-4.5 text-[#0284c7]" />
-              </div>
-              <div className="min-w-0">
-                <span className="block text-xs font-bold text-ink truncate leading-tight group-hover:text-accent transition-colors">
-                  All Drives
-                </span>
-                <span className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal">
-                  cloud.unified
-                </span>
-              </div>
+        <button
+          type="button"
+          onClick={() => handleAccountFilter(null)}
+          className={`flex items-center justify-between w-full p-2 rounded-xl border transition-all text-left cursor-pointer group ${selectedAccountId === null
+            ? 'bg-accent-soft/40 border-accent/40 shadow-xs'
+            : 'border-transparent hover:border-line/60 hover:bg-surface-2/60'
+            }`}
+        >
+          <div className="flex items-center gap-2.5 min-w-0 pr-2">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface border border-line/60 shadow-2xs">
+              <Cloud className="h-4.5 w-4.5 text-[#0284c7]" />
             </div>
+            <div className="min-w-0">
+              <span className="block text-xs font-bold text-ink truncate leading-tight group-hover:text-accent transition-colors">
+                All Drives
+              </span>
+              <span className="block text-[11px] text-ink-3 truncate leading-tight mt-0.5 font-normal">
+                cloud.unified
+              </span>
+            </div>
+          </div>
 
-            {/* Dynamic Status Indicator: Green for Connected, Red for Error */}
-            <div
-              className={`inline-flex items-center justify-center h-6 w-6 `}
-              title={hasAnyError ? 'Some drives have connection issues' : 'All drives connected'}
-            >
-              <span
-                className={`h-2 w-2 rounded-full shrink-0 ${hasAnyError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
-                  }`}
-              />
-            </div>
-          </button>
-        )}
+          {/* Dynamic Status Indicator: Green for Connected, Red for Error */}
+          <div
+            className="inline-flex items-center justify-center h-6 w-6"
+            title={hasAnyError ? 'Some drives have connection issues' : 'All drives connected'}
+          >
+            <span
+              className={`h-2 w-2 rounded-full shrink-0 ${hasAnyError ? 'bg-danger animate-pulse' : 'bg-emerald-500'
+                }`}
+            />
+          </div>
+        </button>
 
         {/* Connected Account Drives */}
-        {filteredAccounts.map((account) => {
+        {connectedAccounts.map((account) => {
           const isSelected = selectedAccountId === account.id
           const isError = account.status === 'error'
           const isGoogle = account.provider === 'google_drive'
@@ -227,10 +195,10 @@ export function SidebarDrivesSection({ onSelectAccount }: SidebarDrivesSectionPr
           )
         })}
 
-        {/* Empty search or zero accounts */}
-        {filteredAccounts.length === 0 && (
+        {/* Zero accounts empty state */}
+        {connectedAccounts.length === 0 && (
           <div className="py-4 text-center">
-            <p className="text-xs text-ink-3">No matching drives</p>
+            <p className="text-xs text-ink-3">No connected drives</p>
           </div>
         )}
       </div>

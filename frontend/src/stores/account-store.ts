@@ -2,9 +2,22 @@ import { create } from 'zustand'
 import type { ConnectedAccount, StorageSummary } from '@/lib/types'
 import { api } from '@/lib/api'
 
+export type FilterType =
+  | 'folder'
+  | 'document'
+  | 'spreadsheet'
+  | 'presentation'
+  | 'pdf'
+  | 'image'
+  | 'video'
+  | 'audio'
+  | 'archive'
+
+export type FilterModified = 'today' | '7d' | '30d' | 'year'
+
 export interface AccountFilters {
-  type?: string
-  modified?: string
+  type?: FilterType
+  modified?: FilterModified
   search?: string
 }
 
