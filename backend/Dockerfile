@@ -8,6 +8,7 @@ COPY prisma.config.ts ./
 
 RUN npm ci
 
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/drivesync"
 RUN npx prisma generate
 
 COPY tsconfig.json ./
