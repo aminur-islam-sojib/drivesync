@@ -152,7 +152,7 @@ function PublicFileContent() {
         </div>
 
         {/* Media Preview Box */}
-        <div className="relative flex-1 min-h-[500px] flex items-center justify-center rounded-3xl bg-surface/60 border border-line shadow-card overflow-hidden">
+        <div className="relative flex-1 min-h-125 flex items-center justify-center rounded-3xl bg-surface/60 border border-line shadow-card overflow-hidden">
           {kind === 'image' && <ImageViewer src={previewUrl} alt={file.name} />}
           {kind === 'video' && <VideoPlayer src={previewUrl} title={file.name} />}
           {kind === 'audio' && <AudioPlayer src={previewUrl} title={file.name} />}

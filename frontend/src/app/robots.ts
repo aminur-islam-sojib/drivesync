@@ -1,14 +1,32 @@
 import type { MetadataRoute } from 'next'
+import { absoluteUrl } from '@/lib/seo'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://drivesyncone.vercel.app'
+  const isPreview =
+    process.env.VERCEL_ENV !== undefined &&
+    process.env.VERCEL_ENV !== 'production'
+
+  if (isPreview) {
+    return {
+      rules: [
+        {
+          userAgent: '*',
+          disallow: '/',
+        },
+      ],
+    }
+  }
+
+  const sitemapUrl = absoluteUrl('/sitemap.xml')
+  const host = absoluteUrl()
 
   return {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/login', '/register'],
+        allow: '/',
         disallow: [
+          '/api/',
           '/all-files',
           '/recent',
           '/starred',
@@ -19,12 +37,13 @@ export default function robots(): MetadataRoute.Robots {
           '/settings',
           '/google-auth',
           '/google-connected',
+          '/login',
+          '/register',
           '/public/files/',
         ],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+    sitemap: sitemapUrl,
+    host,
   }
 }
-

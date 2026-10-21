@@ -22,26 +22,31 @@ export function HeroSection() {
           <div className="flex flex-col items-center text-center lg:col-span-7 lg:items-start lg:text-left">
             {/* Eyebrow Pill */}
             <div className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-ink-2 shadow-sm">
-              <span className="flex h-2 w-2 items-center justify-center">
+              <span className="flex h-2 w-2 items-center justify-center" aria-hidden="true">
                 <span className="h-2 w-2 animate-ping rounded-full bg-accent opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
               </span>
-              <span>Unified Google Drive & S3 Gateway</span>
+              <span>Unified Google Drive &amp; S3 Gateway</span>
             </div>
 
-            {/* Main Headline */}
-            <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl lg:text-6xl">
-              All your Google Drives.{' '}
-              <span className="text-accent underline decoration-accent-soft decoration-wavy decoration-2">
-                One workspace.
+            {/* Main Headline Area */}
+            <div className="mt-6">
+              <span className="block text-xs font-bold uppercase tracking-wider text-accent mb-2">
+                DriveSync One: Unified Multi-Account Google Drive &amp; S3 Manager
               </span>
-            </h1>
+              <h1 className="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl lg:text-6xl">
+                All your Google Drives.{' '}
+                <span className="text-accent underline decoration-accent-soft decoration-wavy decoration-2">
+                  One workspace.
+                </span>
+              </h1>
+            </div>
 
             {/* Subheading */}
             <p className="mt-5 max-w-2xl text-base text-ink-2 sm:text-lg">
-              Stop juggling browser profiles and running out of space. Connect your personal, work,
-              and university Google accounts into a single pooled drive with instant cross-account
-              search and smart auto-routed uploads.
+              Stop juggling browser profiles and running out of space. DriveSync (DriveSync One)
+              connects your personal, work, and university Google accounts into a single pooled drive
+              with instant cross-account search and smart auto-routed uploads.
             </p>
 
             {/* CTA Group */}
@@ -51,7 +56,7 @@ export function HeroSection() {
                 className="flex h-12 items-center justify-center gap-2.5 rounded-full bg-accent px-7 text-sm font-semibold text-accent-ink shadow-md transition-all hover:opacity-90 active:scale-95"
               >
                 {/* Google multi-color G icon */}
-                <svg className="h-4 w-4" viewBox="0 0 24 24">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -70,7 +75,7 @@ export function HeroSection() {
                   />
                 </svg>
                 <span>Continue with Google</span>
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
 
               <a
@@ -84,15 +89,15 @@ export function HeroSection() {
             {/* Trust Badges */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-ink-3 lg:justify-start">
               <div className="flex items-center gap-1.5">
-                <Lock className="h-3.5 w-3.5 text-accent" />
+                <Lock className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
                 <span>AES-256 Token Encryption</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Shield className="h-3.5 w-3.5 text-success" />
+                <Shield className="h-3.5 w-3.5 text-success" aria-hidden="true" />
                 <span>Official Google OAuth</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5 text-ink-2" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-ink-2" aria-hidden="true" />
                 <span>Zero File Scraping</span>
               </div>
             </div>

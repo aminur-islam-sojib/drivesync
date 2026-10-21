@@ -8,6 +8,27 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,
+  async headers() {
+    const isPreview =
+      process.env.VERCEL_ENV !== undefined &&
+      process.env.VERCEL_ENV !== 'production'
+
+    if (!isPreview) {
+      return []
+    }
+
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+    ]
+  },
 }
 
 export default nextConfig

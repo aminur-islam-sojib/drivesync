@@ -3,38 +3,52 @@ import Script from 'next/script'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
+import {
+  SITE_URL,
+  SITE_NAME,
+  DEFAULT_TITLE,
+  DEFAULT_DESCRIPTION,
+} from '@/lib/seo'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap',
 })
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://drivesyncone.vercel.app'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'DriveSync — Unified Multi-Account Google Drive & S3 Manager',
-    template: '%s | DriveSync',
+    default: DEFAULT_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    'Aggregate multiple Google Drive and S3 accounts into one unified workspace with pooled storage, cross-account search, and smart upload routing.',
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
   keywords: [
-    'Google Drive Manager',
-    'Multi-Account Google Drive',
-    'S3 File Manager',
-    'Cloud Storage Aggregator',
-    'Unified Cloud Workspace',
-    'Pooled Cloud Quota',
-    'Cross-Account Search',
-    'Resumable Uploads',
+    'DriveSync One',
+    'drivesyncone',
+    'drive sync one',
+    'DriveSync',
+    'drivesync',
+    'drive sync',
+    'combine multiple google drive accounts',
+    'merge google drive storage',
+    'pool google drive storage',
+    'manage multiple google drive accounts in one place',
+    'search across multiple google drive accounts',
+    'google drive multi-account manager',
+    'google drive and S3 manager',
+    'multcloud alternative',
   ],
-  authors: [{ name: 'DriveSync' }],
-  creator: 'DriveSync',
-  publisher: 'DriveSync',
+  authors: [{ name: 'DriveSync One Team' }],
+  creator: 'DriveSync One',
+  publisher: 'DriveSync One',
   formatDetection: {
     email: false,
     address: false,
@@ -44,19 +58,26 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'DriveSync — Unified Multi-Account Google Drive & S3 Manager',
-    description:
-      'Aggregate multiple Google Drive and S3 accounts into one unified workspace with pooled storage, cross-account search, and smart upload routing.',
-    url: 'https://drivesyncone.vercel.app',
-    siteName: 'DriveSync',
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'DriveSync One – All your Google Drives. One workspace.',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DriveSync — Unified Multi-Account Google Drive & S3 Manager',
-    description:
-      'Aggregate multiple Google Drive and S3 accounts into one unified workspace with pooled storage, cross-account search, and smart upload routing.',
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: ['/opengraph-image'],
   },
   robots: {
     index: true,
@@ -68,6 +89,10 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
 }
 

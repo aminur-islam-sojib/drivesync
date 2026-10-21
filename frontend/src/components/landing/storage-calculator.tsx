@@ -29,15 +29,15 @@ export function StorageCalculator() {
     <div className="w-full max-w-xl rounded-3xl border border-line bg-surface p-6 sm:p-8 shadow-card">
       <div className="flex items-center justify-between pb-4 border-b border-line">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-soft text-accent">
-            <Sparkles className="h-4 w-4" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-soft text-accent" aria-hidden="true">
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
           </div>
           <span className="text-sm font-semibold text-ink">
             Live Storage Pooling Calculator
           </span>
         </div>
         <span className="flex items-center gap-1 text-xs font-medium text-success">
-          <ShieldCheck className="h-3.5 w-3.5" />
+          <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
           100% Free Tiers
         </span>
       </div>

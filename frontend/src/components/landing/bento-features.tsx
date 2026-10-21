@@ -22,6 +22,21 @@ export function BentoFeatures() {
             Engineered from the ground up to eliminate the friction of managing fragmented cloud
             accounts.
           </p>
+
+          {/* Quick Explainer for Search Snippets & Direct Answers */}
+          <div className="mt-6 rounded-2xl border border-line bg-surface p-5 text-left text-xs sm:text-sm text-ink-2 leading-relaxed shadow-sm">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-accent mb-1.5">
+              What is DriveSync One?
+            </h3>
+            <p>
+              <strong>DriveSync One</strong> (also known as <strong>DriveSync</strong>) is a unified
+              multi-account Google Drive and S3 cloud file manager. It merges multiple Google accounts
+              into a single pooled workspace with cross-account search, smart upload auto-routing, and
+              streaming previews. Instead of constantly switching accounts, DriveSync One lets you
+              access all your cloud storage in one place while your files remain safely stored in your
+              original cloud accounts.
+            </p>
+          </div>
         </div>
 
         {/* Bento Grid */}
@@ -29,38 +44,43 @@ export function BentoFeatures() {
           {/* Card 1: Multi-Account Storage Pooling (Spans 2 cols on lg) */}
           <div className="lg:col-span-2 rounded-3xl border border-line bg-surface p-8 shadow-card flex flex-col justify-between">
             <div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent">
-                <Layers className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent" aria-hidden="true">
+                <Layers className="h-6 w-6" aria-hidden="true" />
               </div>
               <h3 className="mt-6 text-xl font-bold text-ink">
                 Virtual Storage Quota Pooling
               </h3>
               <p className="mt-2 text-sm text-ink-2 max-w-xl">
                 Combine multiple 15 GB free tiers from your personal, university, and secondary Google
-                accounts into one massive virtual drive. Maximize underutilized space without paying
-                for multiple Google One subscriptions.
+                accounts into one pooled virtual drive. Maximize underutilized space across drives
+                without paying for multiple Google One subscriptions.
               </p>
             </div>
 
             <div className="mt-8 rounded-2xl border border-line bg-surface-2 p-5">
               <div className="flex items-center justify-between text-xs font-semibold text-ink">
-                <span>Unified Cloud Pool</span>
-                <span className="text-accent font-bold">130 GB Combined</span>
+                <span>Unified Cloud Pool (3 Linked Accounts)</span>
+                <span className="text-accent font-bold">45 GB Combined Free Storage</span>
               </div>
               <div className="mt-3 h-3 w-full rounded-full bg-line overflow-hidden flex">
-                <div style={{ width: '25%' }} className="bg-[#4285F4] h-full" title="Personal: 15GB" />
-                <div style={{ width: '25%' }} className="bg-[#0F9D58] h-full" title="Work: 15GB" />
-                <div style={{ width: '50%' }} className="bg-[#F4B400] h-full" title="Workspace: 100GB" />
+                <div style={{ width: '33.33%' }} className="bg-[#4285F4] h-full" title="Personal: 15 GB" />
+                <div style={{ width: '33.33%' }} className="bg-[#0F9D58] h-full" title="Work: 15 GB" />
+                <div style={{ width: '33.34%' }} className="bg-[#F4B400] h-full" title="University: 15 GB" />
               </div>
-              <div className="mt-2.5 flex flex-wrap gap-4 text-[11px] text-ink-3">
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-[#4285F4]" /> personal@gmail.com
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-[#0F9D58]" /> work@company.com
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-[#F4B400]" /> alumni@university.edu
+              <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px] text-ink-3">
+                <div className="flex flex-wrap gap-4">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-[#4285F4]" aria-hidden="true" /> personal@gmail.com (15 GB)
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-[#0F9D58]" aria-hidden="true" /> work@company.com (15 GB)
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-[#F4B400]" aria-hidden="true" /> alumni@university.edu (15 GB)
+                  </span>
+                </div>
+                <span className="text-[10px] text-ink-3 italic">
+                  *Google 15 GB quota is shared across Drive, Gmail, &amp; Photos per account
                 </span>
               </div>
             </div>
@@ -69,8 +89,8 @@ export function BentoFeatures() {
           {/* Card 2: Smart Upload Auto-Routing */}
           <div className="rounded-3xl border border-line bg-surface p-8 shadow-card flex flex-col justify-between">
             <div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-success/10 text-success">
-                <Zap className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-success/10 text-success" aria-hidden="true">
+                <Zap className="h-6 w-6" aria-hidden="true" />
               </div>
               <h3 className="mt-6 text-xl font-bold text-ink">
                 Smart Upload Auto-Routing
@@ -92,8 +112,8 @@ export function BentoFeatures() {
           {/* Card 3: Cross-Account Global Search */}
           <div className="rounded-3xl border border-line bg-surface p-8 shadow-card flex flex-col justify-between">
             <div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EA4335]/10 text-[#EA4335]">
-                <Search className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EA4335]/10 text-[#EA4335]" aria-hidden="true">
+                <Search className="h-6 w-6" aria-hidden="true" />
               </div>
               <h3 className="mt-6 text-xl font-bold text-ink">
                 Cross-Account Global Search
@@ -120,8 +140,8 @@ export function BentoFeatures() {
           {/* Card 4: In-App Media Previews */}
           <div className="rounded-3xl border border-line bg-surface p-8 shadow-card flex flex-col justify-between">
             <div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#8B5CF6]/10 text-[#8B5CF6]">
-                <Eye className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#8B5CF6]/10 text-[#8B5CF6]" aria-hidden="true">
+                <Eye className="h-6 w-6" aria-hidden="true" />
               </div>
               <h3 className="mt-6 text-xl font-bold text-ink">
                 Streaming Media Previews
@@ -141,8 +161,8 @@ export function BentoFeatures() {
           {/* Card 5: Bank-Grade Security & Isolation */}
           <div className="rounded-3xl border border-line bg-surface p-8 shadow-card flex flex-col justify-between">
             <div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent">
-                <ShieldCheck className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent" aria-hidden="true">
+                <ShieldCheck className="h-6 w-6" aria-hidden="true" />
               </div>
               <h3 className="mt-6 text-xl font-bold text-ink">
                 AES-256 Token Encryption
