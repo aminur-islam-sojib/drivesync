@@ -173,6 +173,16 @@ export default function CompareMultcloudPage() {
                   <td className="py-3 px-5 text-accent font-semibold bg-accent-soft/5">Yes (AWS, Wasabi, R2, MinIO)</td>
                   <td className="py-3 px-5 text-ink-2">Yes (Multiple providers)</td>
                 </tr>
+                <tr>
+                  <td className="py-3 px-5 font-medium">Open Source Codebase</td>
+                  <td className="py-3 px-5 text-accent font-semibold bg-accent-soft/5">100% Open Source (MIT)</td>
+                  <td className="py-3 px-5 text-ink-3">No (Proprietary closed-source)</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-5 font-medium">Pricing Model</td>
+                  <td className="py-3 px-5 text-accent font-semibold bg-accent-soft/5">100% Free ($0 / mo)</td>
+                  <td className="py-3 px-5 text-ink-2">Commercial (From $9.90 / mo)</td>
+                </tr>
               </tbody>
             </table>
           </div>

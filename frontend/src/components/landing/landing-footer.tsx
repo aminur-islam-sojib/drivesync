@@ -16,7 +16,7 @@ export function LandingFooter() {
               Drive<span className="text-accent">Sync</span> One
             </span>
             <span className="text-ink-3 text-[11px] hidden sm:inline">
-              — Multi-Account Google Drive &amp; S3 Manager
+              — 100% Free &amp; Open-Source Cloud Manager
             </span>
           </div>
 
@@ -64,7 +64,7 @@ export function LandingFooter() {
         {/* Legal & Notice */}
         <div className="mt-8 pt-8 border-t border-line/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-ink-3">
           <div className="flex flex-wrap items-center gap-4">
-            <p>© 2026 DriveSync One. All rights reserved.</p>
+            <p>© 2026 DriveSync One. 100% Free &amp; Open Source (MIT License).</p>
             <Link href="/privacy" className="hover:text-ink transition-colors underline">
               Privacy Policy
             </Link>

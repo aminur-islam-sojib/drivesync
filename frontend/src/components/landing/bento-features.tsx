@@ -29,12 +29,12 @@ export function BentoFeatures() {
               What is DriveSync One?
             </h3>
             <p>
-              <strong>DriveSync One</strong> (also known as <strong>DriveSync</strong>) is a unified
-              multi-account Google Drive and S3 cloud file manager. It merges multiple Google accounts
-              into a single pooled workspace with cross-account search, smart upload auto-routing, and
-              streaming previews. Instead of constantly switching accounts, DriveSync One lets you
-              access all your cloud storage in one place while your files remain safely stored in your
-              original cloud accounts.
+              <strong>DriveSync One</strong> (also known as <strong>DriveSync</strong>) is a 100% free
+              and open-source unified multi-account Google Drive and S3 cloud file manager. It merges
+              multiple Google accounts into a single pooled workspace with cross-account search, smart
+              upload auto-routing, and streaming previews. With zero subscriptions or transfer fees,
+              DriveSync One lets you access all your cloud storage in one place while your files remain
+              safely stored in your original cloud accounts.
             </p>
           </div>
         </div>
@@ -175,7 +175,7 @@ export function BentoFeatures() {
 
             <div className="mt-6 flex items-center gap-2 text-xs text-success font-medium">
               <span className="h-2 w-2 rounded-full bg-success" />
-              Zero AI Training • Official Google OAuth
+              100% Free &amp; Open Source • Zero AI Training • Official Google OAuth
             </div>
           </div>
         </div>

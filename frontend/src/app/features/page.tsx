@@ -11,6 +11,7 @@ import {
   Share2,
   Trash2,
   ArrowRight,
+  Code2,
 } from 'lucide-react'
 import { MarketingShell } from '@/components/layout/marketing-shell'
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
@@ -76,6 +77,11 @@ const FEATURE_LIST = [
     icon: ShieldCheck,
     title: 'Bank-Grade AES-256 Token Encryption',
     desc: 'Security and privacy are engineered into every layer of DriveSync One. All Google OAuth refresh tokens and provider secrets are encrypted at rest using AES-256-GCM. DriveSync One never stores your Google account passwords, never scrapes your private file contents, and does not train artificial intelligence models on your documents.',
+  },
+  {
+    icon: Code2,
+    title: '100% Free & Open-Source Software',
+    desc: 'DriveSync One is completely free to use with zero paywalls, zero subscription tiers, and no artificial bandwidth caps. The entire codebase is open-source under the MIT license on GitHub, enabling complete transparency, community contributions, and self-hosting capabilities.',
   },
 ]
 

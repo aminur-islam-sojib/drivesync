@@ -112,13 +112,18 @@ export default function AboutPage() {
               <Heart className="h-5 w-5" />
             </div>
             <h2 className="text-2xl font-bold text-ink">
-              Who Built DriveSync One
+              Who Built DriveSync One: 100% Free &amp; Open Source
             </h2>
           </div>
           <p className="text-sm leading-relaxed text-ink-2">
             DriveSync One was developed by <strong className="text-ink">Sojib Ahmed</strong> and an
             active community of open-source contributors passionate about building fast, quiet, and
-            respectful web software. The project is openly developed on{' '}
+            respectful web software. The project is completely open source under the permissive MIT
+            license, with zero subscription paywalls, no artificial file quotas, and no venture capital
+            pressure to monetize your storage.
+          </p>
+          <p className="text-sm leading-relaxed text-ink-2">
+            The entire codebase is published on{' '}
             <a
               href="https://github.com/aminur-islam-sojib/drivesyncone"
               target="_blank"
@@ -127,7 +132,8 @@ export default function AboutPage() {
             >
               GitHub
             </a>
-            , where you can inspect the architecture, review code, report issues, and contribute.
+            , where anyone can audit the code, run their own instance, file feature requests, or contribute
+            improvements directly.
           </p>
         </section>
 

@@ -26,7 +26,7 @@ export function HeroSection() {
                 <span className="h-2 w-2 animate-ping rounded-full bg-accent opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
               </span>
-              <span>Unified Google Drive &amp; S3 Gateway</span>
+              <span>100% Free &amp; Open Source • Unified Google Drive &amp; S3 Gateway</span>
             </div>
 
             {/* Main Headline Area */}
@@ -44,9 +44,9 @@ export function HeroSection() {
 
             {/* Subheading */}
             <p className="mt-5 max-w-2xl text-base text-ink-2 sm:text-lg">
-              Stop juggling browser profiles and running out of space. DriveSync (DriveSync One)
-              connects your personal, work, and university Google accounts into a single pooled drive
-              with instant cross-account search and smart auto-routed uploads.
+              Stop juggling browser profiles and running out of space. DriveSync (DriveSync One) is a
+              100% free and open-source cloud manager that connects your personal, work, and university
+              Google accounts into a single pooled drive with instant cross-account search and smart auto-routed uploads.
             </p>
 
             {/* CTA Group */}
@@ -88,6 +88,10 @@ export function HeroSection() {
 
             {/* Trust Badges */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-ink-3 lg:justify-start">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+                <span className="font-medium text-ink-2">100% Free &amp; Open Source</span>
+              </div>
               <div className="flex items-center gap-1.5">
                 <Lock className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
                 <span>AES-256 Token Encryption</span>

@@ -54,7 +54,7 @@ export default async function Image() {
               color: '#38bdf8',
             }}
           >
-            DRIVESYNC ONE
+            DRIVESYNC ONE • 100% FREE & OPEN SOURCE
           </span>
         </div>
 
@@ -97,7 +97,7 @@ export default async function Image() {
             color: '#64748b',
           }}
         >
-          <span>✓ 100% Free Google Tiers</span>
+          <span>✓ 100% Free & Open Source</span>
           <span>✓ AES-256 Token Encryption</span>
           <span>✓ Zero File Scraping</span>
         </div>

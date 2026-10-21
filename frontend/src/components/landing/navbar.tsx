@@ -41,8 +41,8 @@ export function LandingNavbar() {
           <span className="text-lg font-semibold tracking-tight text-ink">
             Drive<span className="text-accent">Sync</span> One
           </span>
-          <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
-            Beta
+          <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-[11px] font-semibold text-accent">
+            Free &amp; Open Source
           </span>
         </Link>
 

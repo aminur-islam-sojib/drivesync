@@ -23,9 +23,9 @@ export const FAQS: FAQItem[] = [
       'No. Google Drive for desktop is a local file synchronization client that mirrors cloud files to your physical computer drive. DriveSync One is a web-based multi-account manager that unifies multiple cloud drives directly in your browser without consuming local disk space or causing file duplicates.',
   },
   {
-    question: 'Is DriveSync One free to use?',
+    question: 'Is DriveSync One free and open-source?',
     answer:
-      'Yes, DriveSync One provides a free tier to connect multiple Google accounts and S3 buckets. You can pool your free 15 GB Google storage quotas (for example, 45 GB across 3 accounts or 75 GB across 5 accounts) without paying for multiple Google One subscriptions.',
+      'Yes! DriveSync One is 100% free and open-source software released under the MIT license. There are no paid subscription walls, no artificial data transfer limits, and no credit cards required. You can use our hosted web version at $0 cost or freely self-host the open-source code from our public GitHub repository.',
   },
   {
     question: 'Does DriveSync store or host my files on its own servers?',

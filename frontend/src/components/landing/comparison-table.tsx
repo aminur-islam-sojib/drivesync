@@ -61,8 +61,15 @@ const COMPARISON_DATA: ComparisonRow[] = [
     googleDrive: false,
   },
   {
+    feature: 'Open Source Codebase (GitHub)',
+    drivesync: true,
+    multcloud: false,
+    rclone: true,
+    googleDrive: false,
+  },
+  {
     feature: 'Pricing Model',
-    drivesync: 'Free Core Tier',
+    drivesync: '100% Free & Open Source',
     multcloud: 'From $9.90 / mo',
     rclone: 'Free (open-source)',
     googleDrive: 'From $1.99 / mo',

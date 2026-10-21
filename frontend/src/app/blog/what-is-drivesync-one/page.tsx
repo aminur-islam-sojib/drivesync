@@ -100,7 +100,8 @@ export default function WhatIsDriveSyncOneArticle() {
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-ink">The Definition: What Is DriveSync One?</h2>
           <p>
-            <strong>DriveSync One</strong> is a web-based multi-account Google Drive and Amazon S3 manager. Rather than acting as a traditional sync tool that duplicates files onto your computer’s hard drive, DriveSync One creates a virtual aggregation layer in your browser.
+            <strong>DriveSync One</strong> is a 100% free and open-source web-based multi-account Google
+            Drive and Amazon S3 manager released under the MIT license. Rather than acting as a traditional sync tool that duplicates files onto your computer’s hard drive, DriveSync One creates a virtual aggregation layer in your browser with zero subscription fees.
           </p>
           <p>
             By authorizing your accounts via official Google OAuth 2.0, DriveSync One unifies your separate Google Drives into a single, cohesive dashboard. It aggregates your free storage quotas into one pooled virtual drive, enables lightning-fast cross-account search, and automatically routes new uploads to the account with the most available capacity.

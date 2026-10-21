@@ -12,7 +12,7 @@ import { absoluteUrl, DEFAULT_DESCRIPTION, ALTERNATE_NAMES } from '@/lib/seo'
 export const metadata = {
   title: 'DriveSync One – Combine Multiple Google Drive Accounts in One Place',
   description:
-    'DriveSync One (DriveSync) merges multiple Google Drive and S3 accounts into one workspace with pooled storage, cross-account search and smart upload routing.',
+    'DriveSync One (DriveSync) is a 100% free and open-source manager that merges multiple Google Drive and S3 accounts into one pooled workspace with cross-account search.',
   alternates: {
     canonical: '/',
   },
@@ -43,6 +43,8 @@ export default function LandingPage() {
     name: 'DriveSync One',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
+    isAccessibleForFree: true,
+    license: 'https://opensource.org/licenses/MIT',
     offers: {
       '@type': 'Offer',
       price: '0',

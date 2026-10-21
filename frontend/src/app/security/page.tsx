@@ -8,6 +8,7 @@ import {
   UserCheck,
   ServerOff,
   ArrowRight,
+  Code2,
 } from 'lucide-react'
 import { MarketingShell } from '@/components/layout/marketing-shell'
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
@@ -64,6 +65,12 @@ const SECURITY_PILLARS = [
     title: 'Compliance with Google API Limited Use Policy',
     description:
       'DriveSync One’s use and transfer to any other app of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements. We request only the permissions necessary to organize files, pool storage quotas, and facilitate requested uploads.',
+  },
+  {
+    icon: Code2,
+    title: '100% Free & Open-Source Code Transparency',
+    description:
+      'Every line of DriveSync One’s codebase is open-source under the MIT license on GitHub. There are no closed proprietary binaries, no secret background telemetry, and no vendor lock-in. Developers and security auditors can inspect every query, cryptographic routine, and authentication flow publicly.',
   },
 ]
 

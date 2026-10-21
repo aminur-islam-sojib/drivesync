@@ -16,7 +16,7 @@ export const DEFAULT_TITLE =
   'DriveSync One – Combine Multiple Google Drive Accounts in One Place'
 
 export const DEFAULT_DESCRIPTION =
-  'DriveSync One (DriveSync) merges multiple Google Drive and S3 accounts into one workspace with pooled storage, cross-account search and smart upload routing.'
+  'DriveSync One (DriveSync) is a 100% free and open-source manager that merges multiple Google Drive and S3 accounts into one workspace with pooled storage and cross-drive search.'
 
 export const DEFAULT_OG_IMAGE = '/opengraph-image'
 
