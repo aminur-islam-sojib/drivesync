@@ -21,3 +21,4 @@ const InteractiveSimulator = dynamic(
 export function SimulatorLoader() {
   return <InteractiveSimulator />
 }
+

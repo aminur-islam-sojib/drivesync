@@ -14,3 +14,4 @@ export function JsonLd({ data, id }: JsonLdProps) {
     />
   )
 }
+

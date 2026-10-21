@@ -30,3 +30,4 @@ export function absoluteUrl(path: string = ''): string {
   const cleanPath = path ? (path.startsWith('/') ? path : `/${path}`) : ''
   return `${cleanBase}${cleanPath}`
 }
+

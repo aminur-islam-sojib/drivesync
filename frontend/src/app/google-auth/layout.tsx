@@ -14,3 +14,4 @@ export default function GoogleAuthLayout({
 }) {
   return <>{children}</>
 }
+
